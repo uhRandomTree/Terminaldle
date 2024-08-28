@@ -1,16 +1,7 @@
 import datetime
 #I'm not sure why, but I was averse to adding the randint function just for one thing, so I decided to add pseudo-randomness for the RandomWord
 from sys import argv
-Attempables=('-A','-ATTEMPTS','--ATTEMPTS')#Add a way for the player to continue infinitely.
-Verboseables=('-V','-VERBOSE','--VERBOSE')
-Helpables=('-H','-HELP','--HELP','/?','-?')
-Quittables=('QUIT','EXIT','CANCEL')
-Verbose=False
-Attempts=6
-for i in argv:
-		if i.upper() in Attempables:Attempts=int(argv[argv.index(i)+1])
-		if i.upper() in Verboseables:Verbose=True
-		if i.upper() in Helpables:exit("-H --HELP /? -?\tExit the program and provide this screen.\n-V --VERBOSE\tProvide verbose output, including game ID, game number, date, and solution when exiting.\n-A --ATTEMPTS\tChange the number of maximum attempts to make it easier or harder. Default is 6.\nType 'QUIT' while the program's running to exit.")
+
 #These can all be optomized an cleaned up, maybe changed for better viewing experience.
 #Should probably add a check or something in case their terminal doesn't have full colour support.
 LtRst='\x1b[0m'#Resets the colours to default.
@@ -20,9 +11,21 @@ LtN='\x1b[48;2;181;159;59m'#Changes the colour to yellow/orange.
 LtW='\x1b[48;2;58;58;60m'#Changes the colour to grey.
 LtEE='\x1b[38;2;255;0;0m'#Changes the colour to red.
 OWL="\r\x1b[1A"#"Over Writes" the current line.
-#All word lists from https://gist.github.com/cfreshman, sourced from https://www.nytimes.com/games/wordle
-#Obviously, a clone of the Wordle game by New York Times magazine.
-#All credit to the New York Times Games.
+
+Attempables=('-A','-ATTEMPTS','--ATTEMPTS')#Add a way for the player to continue infinitely.
+Verboseables=('-V','-VERBOSE','--VERBOSE')
+Helpables=('-H','-HELP','--HELP','/?','-?')
+Quittables=('QUIT','EXIT','CANCEL')
+Playables=('-HTP','-HOW-TO-PLAY','--HOW-TO-PLAY')
+Verbose=False
+Attempts=6
+for i in argv:
+		i=i.upper()
+		if i in Attempables:Attempts=int(argv[argv.index(i)+1])
+		if i in Verboseables:Verbose=True
+		if i in Playables:exit(f"How To Play:\nGuess the Wordle in 6 tries. Each guess must be a valid 5-letter word.\nThe color of the tiles will change to show how close your guess was to the word.\n\nExamples:\n{LtRstW+LtC}W{LtRstW}EARY\n{LtRst}W is in the word and in the correct spot.\n{LtRstW}P{LtN}I{LtRstW}LLS{LtRst}\nI is in the word but in the wrong spot.\n{LtRstW}VAG{LtW}U{LtRstW}E{LtRst}\nU is not in the word in any spot.")
+		if i in Helpables:exit("-H\t--HELP /? -?\tExit the program and provide this screen.\n-V\t--VERBOSE\tProvide verbose output, including game ID, game number, date, and solution when exiting.\n-A\t--ATTEMPTS\tChange the number of maximum attempts to make it easier or harder. Default is 6.\n-HTP\t--HOW-TO-PLAY\tExit the program and display a how-to-play screen.\nType 'QUIT' while the program's running to exit.\nArguments do not have to be capitalized.")
+
 DisplayAns=""
 def Quinput(Request=""):
 		Response=input(Request)
@@ -73,7 +76,6 @@ if GameMode!='I':
 		except request.URLError:
 				print(f"{LtEE}Connection to the NYT website failed{LtRst}, moving to Infinite Wordle mode.")
 
-print(f"How To Play:\nGuess the Wordle in 6 tries. Each guess must be a valid 5-letter word.\nThe color of the tiles will change to show how close your guess was to the word.\n\nExamples:\n{LtRstW+LtC}W{LtRstW}EARY\n{LtRst}W is in the word and in the correct spot.\n{LtRstW}P{LtN}I{LtRstW}LLS{LtRst}\nI is in the word but in the wrong spot.\n{LtRstW}VAG{LtW}U{LtRstW}E{LtRst}\nU is not in the word in any spot.\n\n")
 Attempt=0
 
 if Verbose:DisplayAns=" The answer was "+LtC+RandomWord+LtRst+"."
