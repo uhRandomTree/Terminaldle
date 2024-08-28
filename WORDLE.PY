@@ -1,13 +1,16 @@
 import datetime
 #I'm not sure why, but I was averse to adding the randint function just for one thing, so I decided to add pseudo-randomness for the RandomWord
 from sys import argv
+Attempables=('-A','-ATTEMPTS','--ATTEMPTS')#Add a way for the player to continue infinitely.
 Verboseables=('-V','-VERBOSE','--VERBOSE')
 Helpables=('-H','-HELP','--HELP','/?','-?')
 Quittables=('QUIT','EXIT','CANCEL')
 Verbose=False
+Attempts=6
 for i in argv:
+		if i.upper() in Attempables:Attempts=int(argv[argv.index(i)+1])
 		if i.upper() in Verboseables:Verbose=True
-		if i.upper() in Helpables:exit("-H --HELP /? -?\tExit the program and provide this screen.\n-V --VERBOSE\tProvide verbose output, including game ID, game number, date, and solution when exiting.")
+		if i.upper() in Helpables:exit("-H --HELP /? -?\tExit the program and provide this screen.\n-V --VERBOSE\tProvide verbose output, including game ID, game number, date, and solution when exiting.\n-A --ATTEMPTS\tChange the number of maximum attempts to make it easier or harder. Default is 6.\nType 'QUIT' while the program's running to exit.")
 #These can all be optomized an cleaned up, maybe changed for better viewing experience.
 #Should probably add a check or something in case their terminal doesn't have full colour support.
 LtRst='\x1b[0m'#Resets the colours to default.
@@ -29,7 +32,7 @@ def Quinput(Request=""):
 		return Response
 
 def JSONstr2Dict(InStr):
-		JSONLines=InStr[1:-2].split(',')
+		JSONLines=InStr[1:-1].split(',')
 		JSONDict=dict()
 		for i in JSONLines:
 				JSONDict[i[:i.find(':')].replace('"','')]=i[i.find(':')+1:].replace('"','')
@@ -37,7 +40,13 @@ def JSONstr2Dict(InStr):
 Guessables=list(open("GUESSABLES.TXT").read().split('\n'))#These are on top of the possible ones in Answers.
 WordleList=list(open("ANSWERS.TXT").read().split('\n'))
 RandomWord=WordleList[int(datetime.datetime.now().timestamp()*1000000)%len(WordleList)]
+
 GameMode=Quinput("Which Wordle do you want to play?\n(I)nfinite, New (Y)ork Times, NYT (A)rchive\n")
+Modes=('I','Y','A')
+while GameMode not in Modes:
+		GameMode=print(OWL+" ||Invalid mode"+OWL)
+		GameMode=Quinput()
+print(OWL+GameMode+"              ")
 if GameMode!='I':
 		from urllib import request
 		if GameMode=='Y':
@@ -45,8 +54,6 @@ if GameMode!='I':
 				RequestedDay=f"{datetime.date.today():%Y-%m-%d}"
 		elif GameMode=='A':
 				IDPage=open("IDs.TXT").read()
-				if not Verbose:
-						print(OWL)
 				RequestedDay=Quinput("Please enter your chosen day in the format YYYY-MM-DD, by ID, or by which Wordle it was. (Wordles started counting at 0). Ex: 2023-02-26, ID1462, or 617.\nThe first Wordle was June 19th, 2021 (2021-06-19, ID1, 0).\n")
 				print("Attempting to connect to the New York Times website. This may take a minute.")
 				if '-' in RequestedDay:
@@ -57,8 +64,6 @@ if GameMode!='I':
 				else:
 						RequestedDay.replace(',','')
 						RequestedDay=IDPage[IDPage.find(RequestedDay+'#')+len(RequestedDay)+1:IDPage.find(RequestedDay+'#')+len(RequestedDay)+11]
-		else:
-				print("Invalid mode, moving to Infinite Wordle mode.")
 		try:
 				NYT=JSONstr2Dict(str(request.urlopen(f"https://www.nytimes.com/svc/wordle/v2/{RequestedDay}.json").read(),'utf-8'))#There's something wrong about this, it's not always returning correctly. Troubleshoot.
 				RandomWord=NYT['solution'].upper()
@@ -71,9 +76,9 @@ if GameMode!='I':
 print(f"How To Play:\nGuess the Wordle in 6 tries. Each guess must be a valid 5-letter word.\nThe color of the tiles will change to show how close your guess was to the word.\n\nExamples:\n{LtRstW+LtC}W{LtRstW}EARY\n{LtRst}W is in the word and in the correct spot.\n{LtRstW}P{LtN}I{LtRstW}LLS{LtRst}\nI is in the word but in the wrong spot.\n{LtRstW}VAG{LtW}U{LtRstW}E{LtRst}\nU is not in the word in any spot.\n\n")
 Attempt=0
 
-if Verbose:DisplayAns="The answer was "+LtC+RandomWord+LtRst+"."
+if Verbose:DisplayAns=" The answer was "+LtC+RandomWord+LtRst+"."
 ShareText=str()
-while Attempt<6:
+while Attempt<Attempts:
 		WordGuess=Quinput()
 		if WordGuess not in Guessables and WordGuess not in WordleList:
 				print(OWL+"     ||Invalid word"+OWL)
@@ -110,10 +115,11 @@ while Attempt<6:
 				print(f"You win!{DisplayAns} That took {Attempt+1} attempt(s).")
 				if Quinput("Share? (Y/N)\n")=='Y':
 						if GameMode!='I':
-								print(f"You can copy the below text, normally with Ctrl-Shift-C, but it will change depending on your terminal.\nIt may look garbled or strange, but it should copy correctly.\nWordle {int(NYT['days_since_launch'])} {Attempt+1}/6\n{ShareText}")#I would copy it automatically, but it depends so much by system that it's not worth it and it would be its own program.
+								WordleGameText="Wordle "+NYT['days_since_launch']
 						else:
-								print(f"You can copy the below text, normally with Ctrl-Shift-C, but it will change depending on your terminal.\nIt may look garbled or strange, but it should copy correctly.\n{Attempt+1}/6\n{ShareText}")
+								WordleGameText="Infinite Wordle"
+						print(f"You can copy the below text, normally with Ctrl-Shift-C, but it will change depending on your terminal.\nIt may look garbled or strange, but it should copy correctly.\n{WordleGameText} {Attempt+1}/{Attempts}\n{ShareText}")#I would copy it automatically, but it depends so much by system that it's not worth it and it would be its own program.
 				break
 		Attempt+=1
-		if Attempt==6 and Colourrr!=[1,1,1,1,1]:
-				print("Sorry, you ran out of attemps. "+DisplayAns)
+		if Attempt==Attempts and Colourrr!=[1,1,1,1,1]:
+				print("Sorry, you ran out of attemps."+DisplayAns)
