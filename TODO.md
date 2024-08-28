@@ -5,3 +5,4 @@
 - Maybe create a `--links` argument that displays all of the links relevant (like [this](https://www.nytimes.com/2022/02/10/crosswords/best-wordle-tips.html) and the [original](https://www.nytimes.com/games/wordle/index.html), and maybe the subscribe page out of kindness.
 - Add a seperate script for helping solve it (a solution bot, if you will, that has different options of helpfulness).
 - Though it's sort of against the philosophy of it being in a terminal, a web-looking front-end might be nice.
+- Clean up and refactor code.
