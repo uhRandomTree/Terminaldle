@@ -17,14 +17,10 @@ Verboseables=('-V','-VERBOSE','--VERBOSE')
 Helpables=('-H','-HELP','--HELP','/?','-?')
 Quittables=('QUIT','EXIT','CANCEL')
 Playables=('-HTP','-HOW-TO-PLAY','--HOW-TO-PLAY')
+Linkables=('-L','-Links','--LINKS')
 Verbose=False
 Attempts=6
-for i in argv:
-		i=i.upper()
-		if i in Attempables:Attempts=int(argv[argv.index(i)+1])
-		if i in Verboseables:Verbose=True
-		if i in Playables:exit(f"How To Play:\nGuess the Wordle in 6 tries. Each guess must be a valid 5-letter word.\nThe color of the tiles will change to show how close your guess was to the word.\n\nExamples:\n{LtRstW+LtC}W{LtRstW}EARY\n{LtRst}W is in the word and in the correct spot.\n{LtRstW}P{LtN}I{LtRstW}LLS{LtRst}\nI is in the word but in the wrong spot.\n{LtRstW}VAG{LtW}U{LtRstW}E{LtRst}\nU is not in the word in any spot.")
-		if i in Helpables:exit("-H\t--HELP /? -?\tExit the program and provide this screen.\n-V\t--VERBOSE\tProvide verbose output, including game ID, game number, date, and solution when exiting.\n-A\t--ATTEMPTS\tChange the number of maximum attempts to make it easier or harder. Default is 6.\n-HTP\t--HOW-TO-PLAY\tExit the program and display a how-to-play screen.\nType 'QUIT' while the program's running to exit.\nArguments do not have to be capitalized.")
+
 
 DisplayAns=""
 def Quinput(Request=""):
@@ -40,6 +36,43 @@ def JSONstr2Dict(InStr):
 		for i in JSONLines:
 				JSONDict[i[:i.find(':')].replace('"','')]=i[i.find(':')+1:].replace('"','')
 		return JSONDict
+
+for i in argv:
+		i=i.upper()
+		if i in Helpables:
+				exit("""-H\t--HELP /? -?\tExit the program and provide this screen.
+-V\t--VERBOSE\tProvide verbose output, including game ID, game number, date, and solution when exiting.
+-A\t--ATTEMPTS\tChange the number of maximum attempts to make it easier or harder. Default is 6.
+-HTP\t--HOW-TO-PLAY\tExit the program and display a how-to-play screen.
+
+Type 'QUIT' while the program's running to exit.
+Arguments do not have to be capitalized.""")
+		if i in Playables:
+				exit(f"""How To Play:
+Guess the Wordle in 6 tries. Each guess must be a valid 5-letter word.
+The color of the tiles will change to show how close your guess was to the word.
+
+Examples:
+{LtRstW+LtC}W{LtRstW}EARY
+{LtRst}W is in the word and in the correct spot.
+{LtRstW}P{LtN}I{LtRstW}LLS{LtRst}\nI is in the word but in the wrong spot.
+{LtRstW}VAG{LtW}U{LtRstW}E{LtRst}\nU is not in the word in any spot.""")
+
+if i in Linkables:
+				print("Attempting to connect to the New York Times website. This may take a minute.")
+				from urllib import request
+				NYT=JSONstr2Dict(str(request.urlopen(f"https://www.nytimes.com/svc/wordle/v2/{datetime.date.today():%Y-%m-%d}.json").read(),'utf-8'))
+				exit(f"""The following are help and source links {LtEE}(SPOILERS FOR TODAY'S AND PAST WORDLES){LtRst}:
+NYT Wordle Game\t\t\thttps://www.nytimes.com/games/wordle/index.html
+Wordle \"API\" for today\t\thttps://www.nytimes.com/svc/wordle/v2/{NYT["print_date"]}.json
+NYT Wordle solution page\thttps://www.nytimes.com/{NYT["print_date"].replace('-','/')}/crosswords/wordle-review-{NYT["days_since_launch"]}.html
+Word lists source\t\thttps://gist.github.com/cfreshman""")
+		if i in Attempables:Attempts=int(argv[argv.index(i)+1])
+		if i in Verboseables:Verbose=True
+
+
+
+
 Guessables=list(open("GUESSABLES.TXT").read().split('\n'))#These are on top of the possible ones in Answers.
 WordleList=list(open("ANSWERS.TXT").read().split('\n'))
 RandomWord=WordleList[int(datetime.datetime.now().timestamp()*1000000)%len(WordleList)]
