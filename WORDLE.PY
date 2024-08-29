@@ -13,21 +13,17 @@ LtEE='\x1b[38;2;255;0;0m'#Changes the colour to red.
 OWL="\r\x1b[1A"#"Over Writes" the current line.
 
 Attempables=('-A','-ATTEMPTS','--ATTEMPTS')#Add a way for the player to continue infinitely.
-Verboseables=('-V','-VERBOSE','--VERBOSE')
 Helpables=('-H','-HELP','--HELP','/?','-?')
 Quittables=('QUIT','EXIT','CANCEL')
 Playables=('-HTP','-HOW-TO-PLAY','--HOW-TO-PLAY')
 Linkables=('-L','-Links','--LINKS')
-Verbose=False
 Attempts=6
 
-
-DisplayAns=""
 def Quinput(Request=""):
 		Response=input(Request)
 		Response=Response.upper()
 		if Response in Quittables:
-				exit(OWL+LtEE+"Game quit."+LtRst+DisplayAns)
+				exit(OWL+LtEE+"Game quit."+LtRst)
 		return Response
 
 def JSONstr2Dict(InStr):
@@ -41,7 +37,6 @@ for i in argv:
 		i=i.upper()
 		if i in Helpables:
 				exit("""-H\t--HELP /? -?\tExit the program and provide this screen.
--V\t--VERBOSE\tProvide verbose output, including game ID, game number, date, and solution when exiting.
 -A\t--ATTEMPTS\tChange the number of maximum attempts to make it easier or harder. Default is 6.
 -HTP\t--HOW-TO-PLAY\tExit the program and display a how-to-play screen.
 
@@ -68,7 +63,6 @@ Wordle \"API\" for today\t\thttps://www.nytimes.com/svc/wordle/v2/{NYT["print_da
 NYT Wordle solution page\thttps://www.nytimes.com/{NYT["print_date"].replace('-','/')}/crosswords/wordle-review-{NYT["days_since_launch"]}.html
 Word lists source\t\thttps://gist.github.com/cfreshman""")
 		if i in Attempables:Attempts=int(argv[argv.index(i)+1])
-		if i in Verboseables:Verbose=True
 
 
 
@@ -111,7 +105,7 @@ if GameMode!='I':
 
 Attempt=0
 
-if Verbose:DisplayAns=" The answer was "+LtC+RandomWord+LtRst+"."
+# " The answer was "+LtC+RandomWord+LtRst+"." # Add an option to know the word again.
 ShareText=str()
 while Attempt<Attempts:
 		WordGuess=Quinput()
@@ -147,7 +141,7 @@ while Attempt<Attempts:
 		print(OWL+ColouredWord+LtRst+"              ")
 		ColouredWord=str()
 		if Colourrr==[1,1,1,1,1]:
-				print(f"You win!{DisplayAns} That took {Attempt+1} attempt(s).")
+				print(f"You win! That took {Attempt+1} attempt(s).")
 				if Quinput("Share? (Y/N)\n")=='Y':
 						if GameMode!='I':
 								WordleGameText="Wordle "+NYT['days_since_launch']
@@ -157,4 +151,4 @@ while Attempt<Attempts:
 				break
 		Attempt+=1
 		if Attempt==Attempts and Colourrr!=[1,1,1,1,1]:
-				print("Sorry, you ran out of attemps."+DisplayAns)
+				print("Sorry, you ran out of attemps.") #Add system to see answer.
