@@ -180,7 +180,7 @@ while Attempt<Attempts:
 		if KBDisplay:
 				for i in range(len(KBDisplay)):
 						print(KBColours[i]+KBDisplay[i]+LtRst+LtU,end='')
-				print(LtRst)
+				print(LtRst+'\x1b[1A\x1b[26D'+' '*26+'\x1b[1B')#Moves cursor up, back 26 characters, writes 26 spaces, back down, and to the bottom left.
 		ColouredWord=str()
 		if Colourrr==[1,1,1,1,1]:
 				print(f"You win! That took {Attempt+1} attempt(s).")
