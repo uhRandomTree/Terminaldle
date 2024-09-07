@@ -11,6 +11,7 @@ LtW=   '\x1b[48;2;58;58;60m'#Changes the colour to dark grey.
 LtU=   '\x1b[48;2;81;83;84m'#Changes the colour to light grey.
 LtEE=  '\x1b[38;2;255;0;0m'#Changes the colour to red.
 OWL= '\r\x1b[1A'#"Over Writes" the current line.
+KBH=False
 Keyboards={
 "QWERTY": ('Q','W','E','R','T','Y','U','I','O','P','A','S','D','F','G','H','J','K','L','Z','X','C','V','B','N','M'),
 "ABC":    ('A','B','C','D','E','F','G','H','I','J','K','L','M','N','O','P','Q','R','S','T','U','V','W','X','Y','Z'),
@@ -25,6 +26,7 @@ Helpables=  ('-H','--HELP','/?','-?')
 Playables=  ('-HTP','--HOW-TO-PLAY')
 Linkables=  ('-L','--LINKS')
 KBables=    ('-K','--KEYBOARD')
+Historics=  ('-KBH','--KEYBOARD-HISTORY')
 Attempts=6
 
 def Quinput(Request=""):
@@ -86,7 +88,7 @@ Word lists source\t\thttps://gist.github.com/cfreshman""")
 
 		if i in Attempables:Attempts=int(argv[argv.index(i)+1])
 
-
+		if i in Historics:KBH=True
 		if i in KBables:
 				try:
 						KBDisplay=Keyboards[argv[argv.index(i)+1]]
@@ -158,8 +160,8 @@ while Attempt<Attempts:
 				if WordGuess[i] in RemainingL:
 						if Colourrr[i]!=1:
 								Colourrr[i]=2
+								if KBDisplay:KBColours[KBDisplay.index(WordGuess[i])]=LtN#Something funky about the highlighting.
 						RemainingL.remove(WordGuess[i])
-						if KBDisplay:KBColours[KBDisplay.index(WordGuess[i])]=LtN#Something funky about the highlighting.
 
 		ColouredWord=str()
 		for ColIn,CurLet in zip(Colourrr,WordGuess):
@@ -180,7 +182,9 @@ while Attempt<Attempts:
 		if KBDisplay:
 				for i in range(len(KBDisplay)):
 						print(KBColours[i]+KBDisplay[i]+LtRst+LtU,end='')
-				print(LtRst+'\x1b[1A\x1b[26D'+' '*26+'\x1b[1B')#Moves cursor up, back 26 characters, writes 26 spaces, back down, and to the bottom left.
+				if not KBH:print(LtRst+'\x1b[1A\x1b[26D'+' '*26+'\x1b[1B')#Moves cursor up, back 26 characters, writes 26 spaces, back down, and to the bottom left.
+				else:
+						print(LtRst)
 		ColouredWord=str()
 		if Colourrr==[1,1,1,1,1]:
 				print(f"You win! That took {Attempt+1} attempt(s).")
