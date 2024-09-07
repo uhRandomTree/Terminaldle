@@ -1,4 +1,4 @@
-- Add a keyboard visualization to show what letters haven't been used and such.
+~~- Add a keyboard visualization to show what letters haven't been used and such.~~
 - Add the hard mode present on real Wordle.
 - Consolidate the `UpdateIDs.py` into `WORDLE.PY`, or make a way to share functions and data between them. (A lot of `UpdateIDs.py` is copied from `WORDLE.PY` and just takes up space.)
 ~~- Link the https://www.nytimes.com/YYYY/MM/DD/crosswords/wordle-review-GAME#.html somewhere for easy access.~~
