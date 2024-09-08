@@ -12,6 +12,8 @@ LtU=   '\x1b[48;2;81;83;84m'#Changes the colour to light grey.
 LtEE=  '\x1b[38;2;255;0;0m'#Changes the colour to red.
 OWL= '\r\x1b[1A'#"Over Writes" the current line.
 KBH=False
+Modes=('I','Y','A')
+GameMode=''
 Keyboards={
 "QWERTY": ('Q','W','E','R','T','Y','U','I','O','P','A','S','D','F','G','H','J','K','L','Z','X','C','V','B','N','M'),
 "ABC":    ('A','B','C','D','E','F','G','H','I','J','K','L','M','N','O','P','Q','R','S','T','U','V','W','X','Y','Z'),
@@ -27,6 +29,7 @@ Playables=  ('-HTP','--HOW-TO-PLAY')
 Linkables=  ('-L','--LINKS')
 KBables=    ('-K','--KEYBOARD')
 Historics=  ('-KBH','--KEYBOARD-HISTORY')
+Modables=   ('-M','--MODE')
 Attempts=6
 
 def Quinput(Request=""):
@@ -87,6 +90,7 @@ NYT Wordle solution page\thttps://www.nytimes.com/{NYT["print_date"].replace('-'
 Word lists source\t\thttps://gist.github.com/cfreshman""")
 
 		if i in Attempables:Attempts=int(argv[argv.index(i)+1])
+		if i in Modables:GameMode=argv[argv.index(i)+1]
 
 		if i in Historics:KBH=True
 		if i in KBables:
@@ -97,13 +101,14 @@ Word lists source\t\thttps://gist.github.com/cfreshman""")
 WordleList=open("ANSWERS.TXT").read().split('\n')
 RandomWord=WordleList[int(datetime.datetime.now().timestamp()*1000000)%len(WordleList)]
 WordleList.extend(open("GUESSABLES.TXT").read().split('\n'))
-
-GameMode=Quinput("Which Wordle do you want to play?\n(I)nfinite, New (Y)ork Times, NYT (A)rchive\n")
-Modes=('I','Y','A')
-while GameMode not in Modes:
-		GameMode=print(OWL+" ||Invalid mode||"+OWL)
-		GameMode=Quinput()
-print(OWL+GameMode+' '*16)
+if GameMode in Modes:
+		pass
+else:
+		GameMode=Quinput("Which mode do you want to play?\n(I)nfinite, New (Y)ork Times, NYT (A)rchive\n")
+		while GameMode not in Modes:
+				GameMode=print(OWL+" ||Invalid mode||"+OWL)
+				GameMode=Quinput()
+		print(OWL+GameMode+' '*16)
 
 if GameMode!='I':
 		from urllib import request
