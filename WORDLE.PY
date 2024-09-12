@@ -148,7 +148,6 @@ if GameMode!='I':
 				print("Date: "+RequestedDay)
 		except request.URLError:
 				print(f"{LtEE}Connection to the NYT website failed{LtRst}, moving to Infinite Wordle mode.")
-RandomWord='TESTY'
 Attempt=0
 # " The answer was "+LtC+RandomWord+LtRst+"." # Add an option to know the word again.
 if ShareYN!=False:ShareText=str()
