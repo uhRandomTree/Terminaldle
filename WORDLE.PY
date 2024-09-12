@@ -13,7 +13,9 @@ LtEE=  '\x1b[38;2;255;0;0m'#Changes the colour to red.
 OWL= '\r\x1b[1A'#"Over Writes" the current line.
 KBH=False
 Modes=('I','Y','A')
+Sharings=('N','Y','NO','YES','0','1','F','T','FALSE','TRUE')
 GameMode=''
+ShareYN=None
 Keyboards={
 "QWERTY": ('Q','W','E','R','T','Y','U','I','O','P','A','S','D','F','G','H','J','K','L','Z','X','C','V','B','N','M'),
 "ABC":    ('A','B','C','D','E','F','G','H','I','J','K','L','M','N','O','P','Q','R','S','T','U','V','W','X','Y','Z'),
@@ -30,6 +32,7 @@ Linkables=  ('-L','--LINKS')
 KBables=    ('-K','--KEYBOARD')
 Historics=  ('-KBH','--KEYBOARD-HISTORY')
 Modables=   ('-M','--MODE')
+Shareable=  ('-S','--SHARE')
 Attempts=6
 
 def Quinput(Request=""):
@@ -54,6 +57,12 @@ for i in argv:
 				exit("""-H\t--HELP /? -?\tExit the program and provide this screen.
 -A\t--ATTEMPTS\tChange the number of maximum attempts to make it easier or harder. Default is 6.
 -HTP\t--HOW-TO-PLAY\tExit the program and display a how-to-play screen.
+-M\t--Mode\tSelect your mode.
+OPTIONS:
+\t(I)nfinite.
+\tNew (Y)ork Times today.
+\tA Wordle from the NYT (A)rchives.
+
 -K\t--KEYBOARD\tSelect a keyboard to display during the game. Default is ABC.
 OPTIONS: (In order of)
 \tABC\tThe alphabet.
@@ -91,6 +100,7 @@ Word lists source\t\thttps://gist.github.com/cfreshman""")
 
 		if i in Attempables:Attempts=int(argv[argv.index(i)+1])
 		if i in Modables:GameMode=argv[argv.index(i)+1]
+		if i in Shareable:ShareYN=argv[argv.index(i)+1]
 
 		if i in Historics:KBH=True
 		if i in KBables:
@@ -138,10 +148,10 @@ if GameMode!='I':
 				print("Date: "+RequestedDay)
 		except request.URLError:
 				print(f"{LtEE}Connection to the NYT website failed{LtRst}, moving to Infinite Wordle mode.")
-
+RandomWord='TESTY'
 Attempt=0
 # " The answer was "+LtC+RandomWord+LtRst+"." # Add an option to know the word again.
-ShareText=str()
+if ShareYN!=False:ShareText=str()
 if KBDisplay:KBColours=['']*26
 while Attempt<Attempts:
 		WordGuess=Quinput()
@@ -172,14 +182,14 @@ while Attempt<Attempts:
 		for ColIn,CurLet in zip(Colourrr,WordGuess):
 				if ColIn==0:
 						ColouredWord+=LtW+CurLet
-						ShareText+='⬛'#Black square character
+						if ShareYN!=False:ShareText+='⬛'#Black square character
 				elif ColIn==1:
 						ColouredWord+=LtC+CurLet
-						ShareText+='🟩'#Green square emoji
+						if ShareYN!=False:ShareText+='🟩'#Green square emoji
 				else:
 						ColouredWord+=LtN+CurLet
-						ShareText+='🟨'#Yellowish sqare emoji.
-		ShareText+='\n'
+						if ShareYN!=False:ShareText+='🟨'#Yellowish sqare emoji.
+		if ShareYN!=False:ShareText+='\n'
 		# print(KBColours)
 		print(OWL+LtRstW+ColouredWord+LtRst+' '*21,end='')
 		if KBDisplay:print(LtU,end='')
@@ -193,7 +203,15 @@ while Attempt<Attempts:
 		ColouredWord=str()
 		if Colourrr==[1,1,1,1,1]:
 				print(f"You win! That took {Attempt+1} attempt(s).")
-				if Quinput("Share? (Y/N)\n")=='Y':
+				OWLSHARE=False
+				if ShareYN not in Sharings:
+						OWLSHARE=True
+						ShareYN=Quinput("Do you want to share? (Y)es/(N)o\n")
+				while ShareYN not in Sharings:
+						ShareYN=print(OWL+"     ||Invalid||"+OWL)
+						ShareYN=Quinput()
+				print(OWL+ShareYN+' '*20)
+				if Sharings.index(ShareYN)%2==1:
 						if GameMode!='I':
 								WordleGameText="Wordle "+NYT['days_since_launch']
 						else:
