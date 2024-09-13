@@ -155,7 +155,7 @@ if KBDisplay:KBColours=['']*26
 while Attempt<Attempts:
 		WordGuess=Quinput()
 		if len(WordGuess)!=5:
-				print(OWL+"     ||Word wrong length||"+OWL)
+				print(OWL+"     ||Wrong word length||"+OWL)
 				continue
 		elif WordGuess not in WordleList:
 				print(OWL+"     ||Invalid word||     "+OWL)
@@ -209,7 +209,7 @@ while Attempt<Attempts:
 				while ShareYN not in Sharings:
 						ShareYN=print(OWL+"     ||Invalid||"+OWL)
 						ShareYN=Quinput()
-				print(OWL+ShareYN+' '*20)
+				if OWLSHARE:print(OWL+ShareYN+' '*20)
 				if Sharings.index(ShareYN)%2==1:
 						if GameMode!='I':
 								WordleGameText="Wordle "+NYT['days_since_launch']
