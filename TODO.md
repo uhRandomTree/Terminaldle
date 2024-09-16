@@ -1,12 +1,12 @@
-~~- Add a keyboard visualization to show what letters haven't been used and such.~~
+- ~~Add a keyboard visualization to show what letters haven't been used and such.~~
 - Add the hard mode present on real Wordle.
 - Consolidate the `UpdateIDs.py` into `WORDLE.PY`, or make a way to share functions and data between them. (A lot of `UpdateIDs.py` is copied from `WORDLE.PY` and just takes up space.)
-~~- Link the https://www.nytimes.com/YYYY/MM/DD/crosswords/wordle-review-GAME#.html somewhere for easy access.~~
-~~- Maybe create a `--links` argument that displays all of the links relevant (like [this](https://www.nytimes.com/2022/02/10/crosswords/best-wordle-tips.html) and the [original](https://www.nytimes.com/games/wordle/index.html), and maybe the subscribe page out of kindness.~~
+- ~~Link the https://www.nytimes.com/YYYY/MM/DD/crosswords/wordle-review-GAME#.html somewhere for easy access.~~
+- ~~Maybe create a `--links` argument that displays all of the links relevant (like [this](https://www.nytimes.com/2022/02/10/crosswords/best-wordle-tips.html) and the [original](https://www.nytimes.com/games/wordle/index.html), and maybe the subscribe page out of kindness.~~
 - Add a seperate script for helping solve it (a solution bot, if you will, that has different options of helpfulness).
 - Though it's sort of against the philosophy of it being in a terminal, a web-looking front-end might be nice.
 - ^ Probably a nice TUI is sufficent, and makes more sense.
 - High contrast mode, 16 colour mode, etc.
-~~- Pass and play mode.~~
+- ~~Pass and play mode.~~
 - "Marathon" mode, where the final guess becomes the next word's starting guess, and number of games played is counted. Probably reccomended to reduce to 5 or fewer attempts.
 - Clean up and refactor code.
