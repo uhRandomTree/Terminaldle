@@ -244,7 +244,9 @@ while Attempt<Attempts:
 				else:
 						if GameMode=='P':
 								Attempt=0
+								print(LtRstW+"Change!"+LtRst)
 								RandomWord=ValidWord(False)
+								if KBDisplay:KBColours=['']*26
 		if Attempt==Attempts and Colourrr!=[1,1,1,1,1]:
 				print("Sorry, you ran out of attemps.",end='') #Add system to see answer.
 				if GameMode=='P':print(" The other player wins.")
