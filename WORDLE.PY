@@ -217,11 +217,12 @@ while Attempt<Attempts:
 				print(LtU,end='')
 				for i in range(len(KBDisplay)):
 						print(KBColours[i]+KBDisplay[i]+LtRst+LtU,end='')
-				if not KBH:print(LtRst+'\x1b[1A\x1b[26D'+' '*26+'\x1b[1B')#Moves cursor up, back 26 characters, writes 26 spaces, back down, and to the bottom left.
+				if not KBH and Attempt!=0:print(LtRst+'\x1b[1A\x1b[26D'+' '*26+'\x1b[1B')#Moves cursor up, back 26 characters, writes 26 spaces, back down, and to the bottom left.
 				else:
 						print(LtRst)
 		else:print()
 		ColouredWord=str()
+		Attempt+=1
 		if Colourrr==[1,1,1,1,1]:
 				if not LoopGameloop:
 						print(f"You win! That took {Attempt+1} attempt(s).")
@@ -244,7 +245,6 @@ while Attempt<Attempts:
 						if GameMode=='P':
 								Attempt=0
 								RandomWord=ValidWord(False)
-		Attempt+=1
 		if Attempt==Attempts and Colourrr!=[1,1,1,1,1]:
 				print("Sorry, you ran out of attemps.",end='') #Add system to see answer.
 				if GameMode=='P':print(" The other player wins.")
