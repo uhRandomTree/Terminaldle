@@ -1,6 +1,10 @@
 import datetime
 from sys import argv
 
+#CHANGE TO REFLECT MODES!!!
+#ADD KEYBOARD HISTORY
+
+
 #These can all be optomized an cleaned up, maybe changed for better viewing experience.
 #Should probably add a check or something in case their terminal doesn't have full colour support.
 LtRst= '\x1b[0m'#Resets the colours to default.
@@ -12,10 +16,11 @@ LtU=   '\x1b[48;2;81;83;84m'#Changes the colour to light grey.
 LtEE=  '\x1b[38;2;255;0;0m'#Changes the colour to red.
 OWL= '\r\x1b[1A'#"Over Writes" the current line.
 KBH=False
-Modes=('I','Y','A')
+Modes=('I','Y','A','P')
 Sharings=('N','Y','NO','YES','0','1','F','T','FALSE','TRUE')
 GameMode=''
 ShareYN=None
+LoopGameloop=False
 Keyboards={
 "QWERTY": ('Q','W','E','R','T','Y','U','I','O','P','A','S','D','F','G','H','J','K','L','Z','X','C','V','B','N','M'),
 "ABC":    ('A','B','C','D','E','F','G','H','I','J','K','L','M','N','O','P','Q','R','S','T','U','V','W','X','Y','Z'),
@@ -36,8 +41,7 @@ Shareable=  ('-S','--SHARE')
 Attempts=6
 
 def Quinput(Request=""):
-		Response=input(Request)
-		Response=Response.upper()
+		Response=input(Request).upper().strip()
 		if Response in Quittables:
 				exit(OWL+LtEE+"Game quit.                "+LtRst)
 		return Response
@@ -48,6 +52,21 @@ def JSONstr2Dict(InStr):
 		for i in JSONLines:
 				JSONDict[i[:i.find(':')].replace('"','')]=i[i.find(':')+1:].replace('"','')
 		return JSONDict
+
+def ValidWord(ShowWord=True):
+		Word=Quinput()
+		while True:
+				if len(Word)!=5:
+						print(OWL+' '*5+LtEE+"||Wrong word length||"+LtRst+OWL)
+				elif Word not in WordleList:
+						print(OWL+' '*5+LtEE+"||Invalid word||"+LtRst+' '*5+OWL)
+				else:
+						if ShowWord:
+								print(OWL+Word+' '*22)
+						else:
+								print(OWL+"#####"+' '*22)
+						return Word
+				Word=Quinput()
 
 KBDisplay=Keyboards["ABC"]
 argv=[i.upper() for i in argv]
@@ -63,6 +82,7 @@ OPTIONS:
 \tNew (Y)ork Times today.
 \tA Wordle from the NYT (A)rchives.
 
+-KBH\t--KEYBOARD-HISTORY\tDoesn't clear the contents of previous word's keyboards.
 -K\t--KEYBOARD\tSelect a keyboard to display during the game. Default is ABC.
 OPTIONS: (In order of)
 \tABC\tThe alphabet.
@@ -83,7 +103,9 @@ Examples:
 {LtRstW+LtC}W{LtRstW}EARY
 {LtRst}W is in the word and in the correct spot.
 {LtRstW}P{LtN}I{LtRstW}LLS{LtRst}\nI is in the word but in the wrong spot.
-{LtRstW}VAG{LtW}U{LtRstW}E{LtRst}\nU is not in the word in any spot.""")
+{LtRstW}VAG{LtW}U{LtRstW}E{LtRst}\nU is not in the word in any spot.
+
+In Infinite mode, you play a random word. In NYT mode, you play today's Wordle. In Archive, you play any Wordle. In Pass&Play, you choose words for your opponent to guess, until one of you fails.""")
 
 		if i in Linkables:
 				print("Attempting to connect to the New York Times website. This may take a minute.")
@@ -114,13 +136,18 @@ WordleList.extend(open("GUESSABLES.TXT").read().split('\n'))
 if GameMode in Modes:
 		pass
 else:
-		GameMode=Quinput("Which mode do you want to play?\n(I)nfinite, New (Y)ork Times, NYT (A)rchive\n")
+		GameMode=Quinput("Which mode do you want to play?\n(I)nfinite, New (Y)ork Times, NYT (A)rchive, (P)ass&Play\n")
 		while GameMode not in Modes:
-				GameMode=print(OWL+" ||Invalid mode||"+OWL)
+				GameMode=print(OWL+' '+LtEE+"||Invalid mode||"+LtRst+OWL)#Gonna make some function for this whole mess. Later.
 				GameMode=Quinput()
 		print(OWL+GameMode+' '*16)
 
-if GameMode!='I':
+if GameMode=='P':
+		ShareYN=False
+		print(f"Choose your opponent's word and{LtEE} don't show them.{LtRst}")
+		RandomWord=ValidWord(False)
+		LoopGameloop=True
+elif GameMode!='I':
 		from urllib import request
 
 		if GameMode=='Y':
@@ -148,20 +175,15 @@ if GameMode!='I':
 				print("Date: "+RequestedDay)
 		except request.URLError:
 				print(f"{LtEE}Connection to the NYT website failed{LtRst}, moving to Infinite Wordle mode.")
+
 Attempt=0
-# " The answer was "+LtC+RandomWord+LtRst+"." # Add an option to know the word again.
 if ShareYN!=False:ShareText=str()
 if KBDisplay:KBColours=['']*26
 while Attempt<Attempts:
-		WordGuess=Quinput()
-		if len(WordGuess)!=5:
-				print(OWL+"     ||Wrong word length||"+OWL)
-				continue
-		elif WordGuess not in WordleList:
-				print(OWL+"     ||Invalid word||     "+OWL)
-				continue
+		WordGuess=ValidWord()
 		Colourrr=[0,0,0,0,0]
 		RemainingL=[]
+
 		for i in range(5):
 				if WordGuess[i]==RandomWord[i]:
 						Colourrr[i]=1
@@ -191,32 +213,39 @@ while Attempt<Attempts:
 		if ShareYN!=False:ShareText+='\n'
 		# print(KBColours)
 		print(OWL+LtRstW+ColouredWord+LtRst+' '*21,end='')
-		if KBDisplay:print(LtU,end='')
-		else:print()
 		if KBDisplay:
+				print(LtU,end='')
 				for i in range(len(KBDisplay)):
 						print(KBColours[i]+KBDisplay[i]+LtRst+LtU,end='')
 				if not KBH:print(LtRst+'\x1b[1A\x1b[26D'+' '*26+'\x1b[1B')#Moves cursor up, back 26 characters, writes 26 spaces, back down, and to the bottom left.
 				else:
 						print(LtRst)
+		else:print()
 		ColouredWord=str()
 		if Colourrr==[1,1,1,1,1]:
-				print(f"You win! That took {Attempt+1} attempt(s).")
-				OWLSHARE=False
-				if ShareYN not in Sharings:
-						OWLSHARE=True
-						ShareYN=Quinput("Do you want to share? (Y)es/(N)o\n")
-				while ShareYN not in Sharings:
-						ShareYN=print(OWL+"     ||Invalid||"+OWL)
-						ShareYN=Quinput()
-				if OWLSHARE:print(OWL+ShareYN+' '*20)
-				if Sharings.index(ShareYN)%2==1:
-						if GameMode!='I':
-								WordleGameText="Wordle "+NYT['days_since_launch']
-						else:
-								WordleGameText="Infinite Wordle"
-						print(f"You can copy the below text, normally with Ctrl-Shift-C, but it will change depending on your terminal.\nIt may look garbled or strange, but it should copy correctly.\n{WordleGameText} {Attempt+1}/{Attempts}\n{ShareText}")#I would copy it automatically, but it depends so much by system that it's not worth it and it would be its own program.
-				break
+				if not LoopGameloop:
+						print(f"You win! That took {Attempt+1} attempt(s).")
+						OWLSHARE=False
+						if ShareYN not in Sharings:
+								OWLSHARE=True
+								ShareYN=Quinput("Do you want to share? (Y)es/(N)o\n")
+						while ShareYN not in Sharings:
+								ShareYN=print(OWL+' '*5+LtEE+"||Invalid||"+LtRst+OWL)
+								ShareYN=Quinput()
+						if OWLSHARE:print(OWL+ShareYN+' '*20)
+						if Sharings.index(ShareYN)%2==1:
+								if GameMode!='I':
+										WordleGameText="Wordle "+NYT['days_since_launch']
+								else:
+										WordleGameText="Infinite Wordle"
+								print(f"You can copy the below text, normally with Ctrl-Shift-C, but it will change depending on your terminal.\nIt may look garbled or strange, but it should copy correctly.\n{WordleGameText} {Attempt+1}/{Attempts}\n{ShareText}")#I would copy it automatically, but it depends so much by system that it's not worth it and it would be its own program.
+						break
+				else:
+						if GameMode=='P':
+								Attempt=0
+								RandomWord=ValidWord(False)
 		Attempt+=1
 		if Attempt==Attempts and Colourrr!=[1,1,1,1,1]:
-				print("Sorry, you ran out of attemps.") #Add system to see answer.
+				print("Sorry, you ran out of attemps.",end='') #Add system to see answer.
+				if GameMode=='P':print(" The other player wins.")
+				else:print()
