@@ -2,8 +2,6 @@ import datetime
 from sys import argv
 
 #CHANGE TO REFLECT MODES!!!
-#ADD KEYBOARD HISTORY
-
 
 #These can all be optomized an cleaned up, maybe changed for better viewing experience.
 #Should probably add a check or something in case their terminal doesn't have full colour support.
@@ -16,7 +14,7 @@ LtU=   '\x1b[48;2;81;83;84m'#Changes the colour to light grey.
 LtEE=  '\x1b[38;2;255;0;0m'#Changes the colour to red.
 OWL= '\r\x1b[1A'#"Over Writes" the current line.
 KBH=False
-Modes=('I','Y','A','P')
+Modes=('I','Y','A','P','M')
 Sharings=('N','Y','NO','YES','0','1','F','T','FALSE','TRUE')
 GameMode=''
 ShareYN=None
@@ -26,6 +24,7 @@ Keyboards={
 "ABC":    ('A','B','C','D','E','F','G','H','I','J','K','L','M','N','O','P','Q','R','S','T','U','V','W','X','Y','Z'),
 "AZERTY": ('A','Z','E','R','T','Y','U','I','O','P','Q','S','D','F','G','H','J','K','L','M','W','X','C','V','B','N'),
 "WORKMAN":('Q','D','R','W','B','J','F','U','P','A','S','H','T','G','Y','N','E','O','I','Z','X','M','C','V','K','L'),
+"FREQ":   ('E','T','A','O','I','N','S','H','R','D','L','C','U','M','W','F','G','Y','P','B','V','K','J','X','Q','Z'),
 "NONE":   None
 }
 
@@ -43,7 +42,7 @@ Attempts=6
 def Quinput(Request=""):
 		Response=input(Request).upper().strip()
 		if Response in Quittables:
-				exit(OWL+LtEE+"Game quit.                "+LtRst)
+				exit(OWL+LtEE+"Game quit."+' '*16+LtRst)
 		return Response
 
 def JSONstr2Dict(InStr):
@@ -52,21 +51,6 @@ def JSONstr2Dict(InStr):
 		for i in JSONLines:
 				JSONDict[i[:i.find(':')].replace('"','')]=i[i.find(':')+1:].replace('"','')
 		return JSONDict
-
-def ValidWord(ShowWord=True):
-		Word=Quinput()
-		while True:
-				if len(Word)!=5:
-						print(OWL+' '*5+LtEE+"||Wrong word length||"+LtRst+OWL)
-				elif Word not in WordleList:
-						print(OWL+' '*5+LtEE+"||Invalid word||"+LtRst+' '*5+OWL)
-				else:
-						if ShowWord:
-								print(OWL+Word+' '*22)
-						else:
-								print(OWL+"#####"+' '*22)
-						return Word
-				Word=Quinput()
 
 KBDisplay=Keyboards["ABC"]
 argv=[i.upper() for i in argv]
@@ -89,6 +73,7 @@ OPTIONS: (In order of)
 \tQWERTY\tA QWERTY keyboard.
 \tAZERTY\tAn AZERTY keyboard.
 \tWORKMAN\tA workman keyboard.
+\tFREQ\tFrequency of the letters in English.
 \tNONE\tNo keyboard display.
 
 Type 'QUIT' while the program's running to exit.
@@ -130,13 +115,37 @@ Word lists source\t\thttps://gist.github.com/cfreshman""")
 						KBDisplay=Keyboards[argv[argv.index(i)+1]]
 				except:
 						print(LtEE+"Invalid keyboard option, using ABC."+LtRst)
-WordleList=open("ANSWERS.TXT").read().split('\n')
-RandomWord=WordleList[int(datetime.datetime.now().timestamp()*1000000)%len(WordleList)]
+PossibleAnswers=open("ANSWERS.TXT").read().split('\n')
+WordleList=list()#Done to make a deep copy, or else both lists get modified.
+WordleList.extend(PossibleAnswers)
 WordleList.extend(open("GUESSABLES.TXT").read().split('\n'))
+
+print(len(PossibleAnswers))
+print(len(WordleList))
+def ValidWord(ShowWord=True):
+		Word=Quinput()
+		while True:
+				if len(Word)!=5:
+						print(OWL+' '*5+LtEE+"||Wrong word length||"+LtRst+OWL)
+				elif Word not in WordleList:
+						print(OWL+' '*5+LtEE+"||Invalid word||"+LtRst+' '*5+OWL)
+				else:
+						if ShowWord:
+								print(OWL+Word+' '*22)
+						else:
+								print(OWL+"#####"+' '*22)
+						return Word
+				Word=Quinput()
+
+def RandFromTime(ListLen):
+		return int(datetime.datetime.now().timestamp()*1000000)%ListLen
+
+
+RandomWord=PossibleAnswers[RandFromTime(len(PossibleAnswers))]
 if GameMode in Modes:
 		pass
 else:
-		GameMode=Quinput("Which mode do you want to play?\n(I)nfinite, New (Y)ork Times, NYT (A)rchive, (P)ass&Play\n")
+		GameMode=Quinput("Which mode do you want to play?\n(I)nfinite, New (Y)ork Times, NYT (A)rchive, (P)ass&Play, (M)arathon\n")
 		while GameMode not in Modes:
 				GameMode=print(OWL+' '+LtEE+"||Invalid mode||"+LtRst+OWL)#Gonna make some function for this whole mess. Later.
 				GameMode=Quinput()
@@ -146,6 +155,9 @@ if GameMode=='P':
 		ShareYN=False
 		print(f"Choose your opponent's word and{LtEE} don't show them.{LtRst}")
 		RandomWord=ValidWord(False)
+		LoopGameloop=True
+elif GameMode=='M':
+		ShareYN=False
 		LoopGameloop=True
 elif GameMode!='I':
 		from urllib import request
@@ -177,10 +189,14 @@ elif GameMode!='I':
 				print(f"{LtEE}Connection to the NYT website failed{LtRst}, moving to Infinite Wordle mode.")
 
 Attempt=0
+WordGuess=None
 if ShareYN!=False:ShareText=str()
 if KBDisplay:KBColours=['']*26
 while Attempt<Attempts:
-		WordGuess=ValidWord()
+		if GameMode=='M' and Attempt==0 and WordGuess!=None:
+				pass
+		else:
+				WordGuess=ValidWord()
 		Colourrr=[0,0,0,0,0]
 		RemainingL=[]
 
@@ -246,6 +262,12 @@ while Attempt<Attempts:
 								Attempt=0
 								print(LtRstW+"Change!"+LtRst)
 								RandomWord=ValidWord(False)
+								if KBDisplay:KBColours=['']*26
+						elif GameMode=='M':
+								Attempt=0
+								RandomWord=PossibleAnswers[RandFromTime(len(PossibleAnswers))]
+								print(WordGuess)
+								print('-----')
 								if KBDisplay:KBColours=['']*26
 		if Attempt==Attempts and Colourrr!=[1,1,1,1,1]:
 				print("Sorry, you ran out of attemps.",end='') #Add system to see answer.
