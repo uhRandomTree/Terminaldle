@@ -90,7 +90,9 @@ Examples:
 {LtRstW}P{LtN}I{LtRstW}LLS{LtRst}\nI is in the word but in the wrong spot.
 {LtRstW}VAG{LtW}U{LtRstW}E{LtRst}\nU is not in the word in any spot.
 
-In Infinite mode, you play a random word. In NYT mode, you play today's Wordle. In Archive, you play any Wordle. In Pass&Play, you choose words for your opponent to guess, until one of you fails.""")
+In Infinite mode, you play a random word. In NYT mode, you play today's Wordle. In Archive, you play any Wordle from the past.
+In Pass&Play, you choose words for your opponent to guess, until one of you fails.
+In Marathon mode, you play as many games as you can without failing, and the last answer becomes your first guess for the next word.""")
 
 		if i in Linkables:
 				print("Attempting to connect to the New York Times website. This may take a minute.")
