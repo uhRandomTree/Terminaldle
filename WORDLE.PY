@@ -121,9 +121,6 @@ PossibleAnswers=open("ANSWERS.TXT").read().split('\n')
 WordleList=list()#Done to make a deep copy, or else both lists get modified.
 WordleList.extend(PossibleAnswers)
 WordleList.extend(open("GUESSABLES.TXT").read().split('\n'))
-
-print(len(PossibleAnswers))
-print(len(WordleList))
 def ValidWord(ShowWord=True):
 		Word=Quinput()
 		while True:
@@ -159,6 +156,7 @@ if GameMode=='P':
 		RandomWord=ValidWord(False)
 		LoopGameloop=True
 elif GameMode=='M':
+		LapCount=0
 		ShareYN=False
 		LoopGameloop=True
 elif GameMode!='I':
@@ -196,7 +194,7 @@ if ShareYN!=False:ShareText=str()
 if KBDisplay:KBColours=['']*26
 while Attempt<Attempts:
 		if GameMode=='M' and Attempt==0 and WordGuess!=None:
-				pass
+				print('-----\n')
 		else:
 				WordGuess=ValidWord()
 		Colourrr=[0,0,0,0,0]
@@ -267,11 +265,10 @@ while Attempt<Attempts:
 								if KBDisplay:KBColours=['']*26
 						elif GameMode=='M':
 								Attempt=0
+								LapCount+=1
 								RandomWord=PossibleAnswers[RandFromTime(len(PossibleAnswers))]
-								print(WordGuess)
-								print('-----')
 								if KBDisplay:KBColours=['']*26
 		if Attempt==Attempts and Colourrr!=[1,1,1,1,1]:
 				print("Sorry, you ran out of attemps.",end='') #Add system to see answer.
 				if GameMode=='P':print(" The other player wins.")
-				else:print()
+				elif GameMode=='M':print(f" You made it {LapCount} round(s).")
