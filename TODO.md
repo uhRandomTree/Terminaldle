@@ -8,5 +8,5 @@
 - ^ Probably a nice TUI is sufficent, and makes more sense.
 - High contrast mode, 16 colour mode, etc.
 - ~~Pass and play mode.~~
-- "Marathon" mode, where the final guess becomes the next word's starting guess, and number of games played is counted. Probably reccomended to reduce to 5 or fewer attempts.
+- ~~"Marathon" mode, where the final guess becomes the next word's starting guess, and number of games played is counted. Probably reccomended to reduce to 5 or fewer attempts.~~
 - Clean up and refactor code.
