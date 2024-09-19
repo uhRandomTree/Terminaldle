@@ -1,18 +1,6 @@
 import datetime
 from sys import argv
 
-#CHANGE TO REFLECT MODES!!!
-
-#These can all be optomized an cleaned up, maybe changed for better viewing experience.
-#Should probably add a check or something in case their terminal doesn't have full colour support.
-LtRst= '\x1b[0m'#Resets the colours to default.
-LtRstW='\x1b[0;1;38;2;248;248;248m'#Resets the colours to white/bright.
-LtC=   '\x1b[48;2;83;141;78m'#Changes the colour to green.
-LtN=   '\x1b[48;2;181;159;59m'#Changes the colour to yellow/orange.
-LtW=   '\x1b[48;2;58;58;60m'#Changes the colour to dark grey.
-LtU=   '\x1b[48;2;81;83;84m'#Changes the colour to light grey.
-LtEE=  '\x1b[38;2;255;0;0m'#Changes the colour to red.
-OWL= '\r\x1b[1A'#"Over Writes" the current line.
 KBH=False
 Modes=('I','Y','A','P','M')
 Sharings=('N','Y','NO','YES','0','1','F','T','FALSE','TRUE')
@@ -29,15 +17,28 @@ Keyboards={
 }
 
 Quittables= ('QUIT','EXIT','CANCEL')
-Attempables=('-A','--ATTEMPTS')#Add a way for the player to continue infinitely.
+Attempables=('-A','--ATTEMPTS')
 Helpables=  ('-H','--HELP','/?','-?')
 Playables=  ('-HTP','--HOW-TO-PLAY')
 Linkables=  ('-L','--LINKS')
-KBables=    ('-K','--KEYBOARD')
+KBables=    ('-K','-KB','--KEYBOARD')
 Historics=  ('-KBH','--KEYBOARD-HISTORY')
 Modables=   ('-M','--MODE')
 Shareable=  ('-S','--SHARE')
+Colourables=('-C','-COL','--COLOURS','--COLOUR','--COLORS','--COLOR')
 Attempts=6
+
+ColourNames=('NORMAL','8COL','256COL','HICON','NYTHICON',
+						 'WORDLE','8COLOR','256COLOR','HICONTRAST','NYTHICONTRAST',
+						 'CLASSIC','8COLOUR','256COLOUR','HIGHCONTRAST','NYTHIGHCONTRAST')
+LtRst= '\x1b[0m'#Resets the colours to default.
+LtRstW='\x1b[0;1;38;2;248;248;248m'#Resets the colours to white/bright.
+LtC=   '\x1b[48;2;83;141;78m'#Changes the colour to green.
+LtN=   '\x1b[48;2;181;159;59m'#Changes the colour to yellow/orange.
+LtW=   '\x1b[48;2;58;58;60m'#Changes the colour to dark grey.
+LtU=   '\x1b[48;2;81;83;84m'#Changes the colour to light grey.
+LtEE=  '\x1b[38;2;255;0;0m'#Changes the colour to red.
+OWL= '\r\x1b[1A'#"Over Writes" the current line.
 
 def Quinput(Request=""):
 		Response=input(Request).upper().strip()
@@ -76,8 +77,50 @@ OPTIONS: (In order of)
 \tFREQ\tFrequency of the letters in English.
 \tNONE\tNo keyboard display.
 
+-C\t--COLOURS\tChanges the colour modes the game runs in.
+OPTIONS: (COLOUR=COLOR=COL, HIGH=HI, 256-COL=256COL)
+\tCLASSIC\tThe normal colour scheme of the game. All correct and same as the website.
+\t8-COLOUR\tFor terminals that only support 8 colours. Not recommended unless needed.
+\t256-COLOUR\tFor terminals that only support up to the 256 colour palatte.
+\tHIGH-CONTRAST\tIncreases vibrance of the colours to make them easier to see in a terminal.
+\tNYT-HIGH-CONTRAST\tAdds the official high contrast colour palatte of Wordle.
+
 Type 'QUIT' while the program's running to exit.
-Arguments do not have to be capitalized.""")
+Arguments do not have to be capitalized.
+If colours are not displaying properly, try the colours option.""")
+
+		if i in Colourables:
+				DisplayColours=argv[argv.index(i)+1].replace('-','')
+				if DisplayColours in ColourNames:
+						DisplayColours=ColourNames.index(DisplayColours)%5
+				else:
+						DisplayColours=0
+				match DisplayColours:
+						case 0:pass
+						case 1:
+								LtRstW='\x1b[0;1;37m'
+								LtC=   '\x1b[42m'
+								LtN=   '\x1b[43m'
+								LtW=   '\x1b[40;37m'
+								LtU=   LtW
+								LtEE=  '\x1b[31m'
+						case 2:
+								LtRstW='\x1b[0;1;38;5;255m'
+								LtC=   '\x1b[48;5;107m'
+								LtN=   '\x1b[48;5;184m'
+								LtW=   '\x1b[48;5;238m'
+								LtU=   '\x1b[48;5;240m'
+								LtEE=  '\x1b[38;5;9m'
+						case 3:
+								LtRstW='\x1b[0;1;38;5;255m'
+								LtC=   '\x1b[48;5;46m'
+								LtN=   '\x1b[48;5;226m'
+								LtW=   '\x1b[48;5;232m'
+								LtU=   '\x1b[48;5;246m'
+								LtEE=  '\x1b[38;5;9m'
+						case 4:
+								LtC=   '\x1b[48;2;245;121;58m'
+								LtN=   '\x1b[48;2;133;192;249m'
 
 		if i in Playables:
 				exit(f"""How To Play:
@@ -139,8 +182,8 @@ def ValidWord(ShowWord=True):
 def RandFromTime(ListLen):
 		return int(datetime.datetime.now().timestamp()*1000000)%ListLen
 
-
 RandomWord=PossibleAnswers[RandFromTime(len(PossibleAnswers))]
+
 if GameMode in Modes:
 		pass
 else:
