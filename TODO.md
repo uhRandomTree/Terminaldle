@@ -6,7 +6,7 @@
 - Add a seperate script for helping solve it (a solution bot, if you will, that has different options of helpfulness).
 - Though it's sort of against the philosophy of it being in a terminal, a web-looking front-end might be nice.
 - ^ Probably a nice TUI is sufficent, and makes more sense.
-- High contrast mode, 16 colour mode, etc.
+- ~~High contrast mode, 16 colour mode, etc.~~
 - ~~Pass and play mode.~~
 - ~~"Marathon" mode, where the final guess becomes the next word's starting guess, and number of games played is counted. Probably reccomended to reduce to 5 or fewer attempts.~~
 - Clean up and refactor code.
