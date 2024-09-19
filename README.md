@@ -4,8 +4,9 @@ Wordle in the terminal! You can play multiple modes, including -- but not limite
 Simply run `WORDLE.PY` with Python, and you're set! The `--help` argument shows this page:
 ```
 -H    --HELP /? -?   Exit the program and provide this screen.
--A    --ATTEMPTS     Change the number of maximum attempts to make it easier or harder. Default is 6.
 -HTP  --HOW-TO-PLAY  Exit the program and display a how-to-play screen.
+-L    --LINKS        Exit the program and display links to the Wordle sub-websites, including help and solution sites.
+-A    --ATTEMPTS     Change the number of maximum attempts to make it easier or harder. Default is 6.
 -M    --Mode         Select your mode.
 OPTIONS:
   (I)nfinite.
