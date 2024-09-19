@@ -11,3 +11,5 @@
 - ~~"Marathon" mode, where the final guess becomes the next word's starting guess, and number of games played is counted. Probably reccomended to reduce to 5 or fewer attempts.~~
 - Clean up and refactor code.
 - Change how the invalid word is displayed, to give more instant feedback.
+- Update links "page".
+- Update this things main page lol. Images! Images galore!
