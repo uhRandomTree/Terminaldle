@@ -59,31 +59,34 @@ for i in argv:
 
 		if i in Helpables:
 				exit("""-H\t--HELP /? -?\tExit the program and provide this screen.
--A\t--ATTEMPTS\tChange the number of maximum attempts to make it easier or harder. Default is 6.
 -HTP\t--HOW-TO-PLAY\tExit the program and display a how-to-play screen.
--M\t--Mode\tSelect your mode.
+-L\t--LINKS\t\tExit the program and display links to the Wordle sub-websites, including help and solution sites.
+-A\t--ATTEMPTS\tChange the number of maximum attempts to make it easier or harder. Default is 6.
+-M\t--MODE\t\tSelect your mode.
 OPTIONS:
-\t(I)nfinite.
-\tNew (Y)ork Times today.
-\tA Wordle from the NYT (A)rchives.
+\t(I)nfinite
+\tNew (Y)ork Times today
+\tA Wordle from the NYT (A)rchives
+\t(P)ass&Play
+\t(M)arathon
 
 -KBH\t--KEYBOARD-HISTORY\tDoesn't clear the contents of previous word's keyboards.
 -K\t--KEYBOARD\tSelect a keyboard to display during the game. Default is ABC.
 OPTIONS: (In order of)
 \tABC\tThe alphabet.
-\tQWERTY\tA QWERTY keyboard.
-\tAZERTY\tAn AZERTY keyboard.
-\tWORKMAN\tA workman keyboard.
-\tFREQ\tFrequency of the letters in English.
-\tNONE\tNo keyboard display.
+\tQWERTY\tA QWERTY keyboard
+\tAZERTY\tAn AZERTY keyboard
+\tWORKMAN\tA workman keyboard
+\tFREQ\tFrequency of the letters in English
+\tNONE\tNo keyboard display
 
 -C\t--COLOURS\tChanges the colour modes the game runs in.
 OPTIONS: (COLOUR=COLOR=COL, HIGH=HI, 256-COL=256COL)
-\tCLASSIC\tThe normal colour scheme of the game. All correct and same as the website.
+\tCLASSIC\t\tThe normal colour scheme of the game. All correct and same as the website.
 \t8-COLOUR\tFor terminals that only support 8 colours. Not recommended unless needed.
 \t256-COLOUR\tFor terminals that only support up to the 256 colour palatte.
 \tHIGH-CONTRAST\tIncreases vibrance of the colours to make them easier to see in a terminal.
-\tNYT-HIGH-CONTRAST\tAdds the official high contrast colour palatte of Wordle.
+\tNYT-HI-CONTRAST\tAdds the official high contrast colour palatte of Wordle.
 
 Type 'QUIT' while the program's running to exit.
 Arguments do not have to be capitalized.
@@ -119,8 +122,9 @@ If colours are not displaying properly, try the colours option.""")
 								LtU=   '\x1b[48;5;246m'
 								LtEE=  '\x1b[38;5;9m'
 						case 4:
-								LtC=   '\x1b[48;2;245;121;58m'
-								LtN=   '\x1b[48;2;133;192;249m'
+								LtC=   '\x1b[38;5;0;48;2;245;121;58m'
+								LtN=   '\x1b[38;5;0;48;2;133;192;249m'
+								LtW=   '\x1b[38;5;15;48;5;232m'
 
 		if i in Playables:
 				exit(f"""How To Play:
