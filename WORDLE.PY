@@ -169,7 +169,10 @@ WordleList=list()#Done to make a deep copy, or else both lists get modified.
 WordleList.extend(PossibleAnswers)
 WordleList.extend(open("GUESSABLES.TXT").read().split('\n'))
 def ValidWord(ShowWord=True):
-		Word=Quinput()
+		PreWord=Quinput()
+		Word=str()
+		for Letter in PreWord:
+				if Letter.isalpha():Word+=Letter
 		while True:
 				if len(Word)!=5:
 						print(OWL+' '*5+LtEE+"||Wrong word length||"+LtRst+OWL)
@@ -288,7 +291,7 @@ while Attempt<Attempts:
 		Attempt+=1
 		if Colourrr==[1,1,1,1,1]:
 				if not LoopGameloop:
-						print(f"You win! That took {Attempt+1} attempt(s).")
+						print(f"You win! That took {Attempt} attempt(s).")
 						OWLSHARE=False
 						if ShareYN not in Sharings:
 								OWLSHARE=True
@@ -302,7 +305,7 @@ while Attempt<Attempts:
 										WordleGameText="Wordle "+NYT['days_since_launch']
 								else:
 										WordleGameText="Infinite Wordle"
-								print(f"You can copy the below text, normally with Ctrl-Shift-C, but it will change depending on your terminal.\nIt may look garbled or strange, but it should copy correctly.\n{WordleGameText} {Attempt+1}/{Attempts}\n{ShareText}")#I would copy it automatically, but it depends so much by system that it's not worth it and it would be its own program.
+								print(f"You can copy the below text, normally with Ctrl-Shift-C, but it will change depending on your terminal.\nIt may look garbled or strange, but it should copy correctly.\n{WordleGameText} {Attempt}/{Attempts}\n{ShareText}")#I would copy it automatically, but it depends so much by system that it's not worth it and it would be its own program.
 						break
 				else:
 						if GameMode=='P':
