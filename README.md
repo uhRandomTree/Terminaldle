@@ -35,6 +35,19 @@ Type 'QUIT' while the program's running to exit.
 Arguments do not have to be capitalized.
 If colours are not displaying properly, try the colours option.
 ```
+## Usage example
+Let's say we want to do today's Wordle. We'll want to share it, and everything else should be as it is in real Wordle.
+```
+py WORDLE.PY --MODE Y --SHARE YES --KEYBOARD QWERTY
+py WORDLE.PY -m y -s 0 -kb qwerty
+```
+Alright. Let's do every option we can. We want to play marathon mode, our machine only has 256 colour support in it's terminal, we want to make it a little easier, etc.
+```
+py WORDLE.PY --ATTEMPTS 7 --MODE M --KEYBOARD-HISTORY --KEYBOARD FREQ --COLOURS 256-COLOUR
+py WORDLE.PY -a 7 -m m -kbh -k freq -c 256col
+py WORDLE.PY -A 7 -m M -kbh --KEYBOARD freq --COLOR 256color
+```
+## Thanks and credits
 All credit, of course, goes to Josh Wardle, for the creation of the game, and The New York Times Games division for maintaining it. The official link can be found [here](https://www.nytimes.com/games/wordle/index.html). I used the Wordle API, at https://www.nytimes.com/svc/wordle/v2/YYYY-MM-DD.json. The word lists, while sourced from the NYT page, was distributed by Cyrus Freshman at their GitHub [page](https://gist.github.com/cfreshman). Your local ANSWERS.TXT and GUESSABLES.TXT should be updated from their page.
 
 Thanks to the guides on ANSI escape codes, which are used heavily and are necessary for the game to work. [Burke Libbey's guide](https://notes.burke.libbey.me/ansi-escape-codes/) and [Christopher Yeh's](https://chrisyeh96.github.io/2020/03/28/terminal-colors.html) were incredibly valuable resources. Thanks to you both! [Burke's Github](https://github.com/burke) (@burke), and [Christopher's](https://github.com/chrisyeh96) (@chrisyeh96).
