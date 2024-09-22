@@ -265,20 +265,20 @@ while Attempt<Attempts:
 								if KBDisplay:KBColours[KBDisplay.index(WordGuess[i])]=LtN#Something funky about the highlighting.
 						RemainingL.remove(WordGuess[i])
 
-		ColouredWord=str()
+		print(OWL+LtRstW,end='')
 		for ColIn,CurLet in zip(Colourrr,WordGuess):
 				if ColIn==0:
-						ColouredWord+=LtW+CurLet
+						print(LtW+CurLet,end='')
 						if ShareYN!=False:ShareText+='⬛'#Black square character
 				elif ColIn==1:
-						ColouredWord+=LtC+CurLet
+						print(LtC+CurLet,end='')
 						if ShareYN!=False:ShareText+='🟩'#Green square emoji
 				else:
-						ColouredWord+=LtN+CurLet
+						print(LtN+CurLet,end='')
 						if ShareYN!=False:ShareText+='🟨'#Yellowish sqare emoji.
 		if ShareYN!=False:ShareText+='\n'
 		# print(KBColours)
-		print(OWL+LtRstW+ColouredWord+LtRst+' '*21,end='')
+		print(LtRst+' '*21,end='')
 		if KBDisplay:
 				print(LtU,end='')
 				for i in range(len(KBDisplay)):
@@ -287,7 +287,6 @@ while Attempt<Attempts:
 				else:
 						print(LtRst)
 		else:print()
-		ColouredWord=str()
 		Attempt+=1
 		if Colourrr==[1,1,1,1,1]:
 				if not LoopGameloop:
