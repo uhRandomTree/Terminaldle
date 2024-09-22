@@ -189,6 +189,27 @@ def ValidWord(ShowWord=True):
 def RandFromTime(ListLen):
 		return int(datetime.datetime.now().timestamp()*1000000)%ListLen
 
+def DateFromWordleNum(GameNumber):
+		MonthArray=[0,31,28,31,30,31,30,31,31,30,31,30,31,30,31]
+		Day=19
+		Month=6
+		Year=2021
+		while GameNumber>0:
+				Day+=1
+				if Day>MonthArray[Month]:
+						Day=1#Might have to be 0.
+						Month+=1
+				if Month>12:
+						Month=1
+						Year+=1
+						MonthArray[2]=28
+						if Year%100==0:
+								if Year%400==0:MonthArray[2]=29
+						else:
+								if Year%4==0:MonthArray[2]=29
+				GameNumber-=1
+		return f"{Year}-{Month:02d}-{Day:02d}"
+
 RandomWord=PossibleAnswers[RandFromTime(len(PossibleAnswers))]
 
 if GameMode in Modes:
@@ -217,22 +238,19 @@ elif GameMode!='I':
 				RequestedDay=f"{datetime.date.today():%Y-%m-%d}"
 
 		elif GameMode=='A':
-				IDPage=open("IDs.TXT").read()
-				RequestedDay=Quinput("Please enter your chosen day in the format YYYY-MM-DD, by ID, or by which Wordle it was. (Wordles started counting at 0). Ex: 2023-02-26, ID1462, or 617.\nThe first Wordle was June 19th, 2021 (2021-06-19, ID1, 0).\n")
+				# IDPage=open("IDs.TXT").read()
+				RequestedDay=Quinput("Please enter your chosen day in the format YYYY-MM-DD, or by which Wordle it was. (Wordles started counting at 0). Ex: 2023-02-26, or 617.\nThe first Wordle was June 19th, 2021 (2021-06-19, 0).\n")
 				print("Attempting to connect to the New York Times website. This may take a minute.")
 				if '-' in RequestedDay:
 						pass
-				elif 'ID' in RequestedDay:
-						RequestedDay=RequestedDay.replace('ID','')
-						RequestedDay=IDPage[IDPage.find('|'+RequestedDay)-10:IDPage.find('|'+RequestedDay)]
 				else:
 						RequestedDay.replace(',','')
-						RequestedDay=IDPage[IDPage.find(RequestedDay+'#')+len(RequestedDay)+1:IDPage.find(RequestedDay+'#')+len(RequestedDay)+11]
+						RequestedDay=DateFromWordleNum(int(RequestedDay))
 
 		try:
-				NYT=JSONstr2Dict(str(request.urlopen(f"https://www.nytimes.com/svc/wordle/v2/{RequestedDay}.json").read(),'utf-8'))#There's something wrong about this, it's not always returning correctly. Troubleshoot.
+				NYT=JSONstr2Dict(str(request.urlopen(f"https://www.nytimes.com/svc/wordle/v2/{RequestedDay}.json").read(),'utf-8'))
+				if 'days_since_launch' not in NYT.keys():NYT['days_since_launch']='0'
 				RandomWord=NYT['solution'].upper()
-				print("ID: "+NYT['id'])
 				print("Game number: "+NYT['days_since_launch'])
 				print("Date: "+RequestedDay)
 		except request.URLError:
