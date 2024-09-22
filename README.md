@@ -1,5 +1,5 @@
 # Terminaldle
-Wordle in the terminal! You can play multiple modes, including -- but not limited to -- today's and archived Wordles, and Pass&Play against a (nerdy) friend. 
+Wordle in the terminal! You can play multiple modes, including — but not limited to — today's and archived Wordles, and Pass&Play against a (nerdy) friend. 
 
 Simply run `WORDLE.PY` with Python, and you're set! The `--help` argument shows this page:
 ```
