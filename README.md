@@ -5,6 +5,7 @@ Simply run `WORDLE.PY` with Python, and you're set! The `--help` argument shows 
 ```
 -H    --HELP /? -?   Exit the program and provide this screen.
 -HTP  --HOW-TO-PLAY  Exit the program and display a how-to-play screen.
+-U    --UNFAIR       Makes any guessable word a possible answer. Only matters in marathon and infinite modes.
 -L    --LINKS        Exit the program and display links to the Wordle sub-websites, including help and solution sites.
 -A    --ATTEMPTS     Change the number of maximum attempts to make it easier or harder. Default is 6.
 -M    --Mode         Select your mode.
