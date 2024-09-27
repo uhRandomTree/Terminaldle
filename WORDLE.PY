@@ -7,6 +7,8 @@ Sharings=('N','Y','NO','YES','0','1','F','T','FALSE','TRUE')
 GameMode=''
 ShareYN=None
 LoopGameloop=False
+Attempts=6
+Unfair=False
 Keyboards={
 "QWERTY": ('Q','W','E','R','T','Y','U','I','O','P','A','S','D','F','G','H','J','K','L','Z','X','C','V','B','N','M'),
 "ABC":    ('A','B','C','D','E','F','G','H','I','J','K','L','M','N','O','P','Q','R','S','T','U','V','W','X','Y','Z'),
@@ -26,7 +28,7 @@ Historics=  ('-KBH','--KEYBOARD-HISTORY')
 Modables=   ('-M','--MODE')
 Shareable=  ('-S','--SHARE')
 Colourables=('-C','-COL','--COLOURS','--COLOUR','--COLORS','--COLOR')
-Attempts=6
+Unfairables=('-U','--UNFAIR')
 
 ColourNames=('NORMAL','8COL','256COL','HICON','NYTHICON',
 						 'WORDLE','8COLOR','256COLOR','HICONTRAST','NYTHICONTRAST',
@@ -43,7 +45,10 @@ OWL= '\r\x1b[1A'#"Over Writes" the current line.
 def Quinput(Request=""):
 		Response=input(Request).upper().strip()
 		if Response in Quittables:
-				exit(OWL+LtEE+"Game quit."+' '*16+LtRst)
+				if GameMode not in ('Y','A','P'):
+						exit(OWL+LtEE+"Game quit. The word was "+RandomWord+"."+LtRst)
+				else:
+						exit(OWL+LtEE+"Game quit."+LtRst)
 		return Response
 
 def JSONstr2Dict(InStr):
@@ -60,13 +65,14 @@ for i in argv:
 		if i in Helpables:
 				exit("""-H\t--HELP /? -?\tExit the program and provide this screen.
 -HTP\t--HOW-TO-PLAY\tExit the program and display a how-to-play screen.
+-U\t--UNFAIR\tMakes any guessable word a possible answer. Only matters in marathon and infinite modes.
 -L\t--LINKS\t\tExit the program and display links to the Wordle sub-websites, including help and solution sites.
 -A\t--ATTEMPTS\tChange the number of maximum attempts to make it easier or harder. Default is 6.
 -M\t--MODE\t\tSelect your mode.
 OPTIONS:
 \t(I)nfinite
 \tNew (Y)ork Times today
-\tA Wordle from the NYT (A)rchives
+\t(A) Wordle from the NYT Archives
 \t(P)ass&Play
 \t(M)arathon
 
@@ -157,6 +163,7 @@ Word lists source\t\thttps://gist.github.com/cfreshman""")
 		if i in Attempables:Attempts=int(argv[argv.index(i)+1])
 		if i in Modables:GameMode=argv[argv.index(i)+1]
 		if i in Shareable:ShareYN=argv[argv.index(i)+1]
+		if i in Unfairables:Unfair=True
 
 		if i in Historics:KBH=True
 		if i in KBables:
@@ -164,10 +171,16 @@ Word lists source\t\thttps://gist.github.com/cfreshman""")
 						KBDisplay=Keyboards[argv[argv.index(i)+1]]
 				except:
 						print(LtEE+"Invalid keyboard option, using ABC."+LtRst)
-PossibleAnswers=open("ANSWERS.TXT").read().split('\n')
-WordleList=list()#Done to make a deep copy, or else both lists get modified.
-WordleList.extend(PossibleAnswers)
-WordleList.extend(open("GUESSABLES.TXT").read().split('\n'))
+
+if Unfair:
+		WordleList=open("ANSWERS.TXT").read().split('\n')
+		WordleList.extend(open("GUESSABLES.TXT").read().split('\n'))
+else:
+		PossibleAnswers=open("ANSWERS.TXT").read().split('\n')
+		WordleList=list()#Done to make a deep copy, or else both lists get modified.
+		WordleList.extend(PossibleAnswers)
+		WordleList.extend(open("GUESSABLES.TXT").read().split('\n'))
+
 def ValidWord(ShowWord=True):
 		PreWord=Quinput()
 		Word=str()
@@ -210,7 +223,10 @@ def DateFromWordleNum(GameNumber):
 				GameNumber-=1
 		return f"{Year}-{Month:02d}-{Day:02d}"
 
-RandomWord=PossibleAnswers[RandFromTime(len(PossibleAnswers))]
+if Unfair:
+		RandomWord=WordleList[RandFromTime(len(WordleList))]
+else:
+		RandomWord=PossibleAnswers[RandFromTime(len(PossibleAnswers))]
 
 if GameMode in Modes:
 		pass
@@ -333,9 +349,13 @@ while Attempt<Attempts:
 						elif GameMode=='M':
 								Attempt=0
 								LapCount+=1
-								RandomWord=PossibleAnswers[RandFromTime(len(PossibleAnswers))]
+								if Unfair:
+										RandomWord=WordleList[RandFromTime(len(WordleList))]
+								else:
+										RandomWord=PossibleAnswers[RandFromTime(len(PossibleAnswers))]
 								if KBDisplay:KBColours=['']*26
 		if Attempt==Attempts and Colourrr!=[1,1,1,1,1]:
-				print("Sorry, you ran out of attemps.",end='') #Add system to see answer.
-				if GameMode=='P':print(" The other player wins.")
-				elif GameMode=='M':print(f" You made it {LapCount} round(s).")
+				print("Sorry, you ran out of attemps. ",end='') #Add system to see answer.
+				if GameMode=='P':print("The other player wins.")
+				elif GameMode=='M':print(f"You made it {LapCount} round(s). The word was {RandomWord}.")
+				elif GameMode=='I':print("The word was "+RandomWord+".")
