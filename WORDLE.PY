@@ -1,14 +1,6 @@
 import datetime
 from sys import argv
 
-KBH=False
-Modes=('I','Y','A','P','M')
-Sharings=('N','Y','NO','YES','0','1','F','T','FALSE','TRUE')
-GameMode=''
-ShareYN=None
-LoopGameloop=False
-Attempts=6
-Unfair=False
 Keyboards={
 "QWERTY": ('Q','W','E','R','T','Y','U','I','O','P','A','S','D','F','G','H','J','K','L','Z','X','C','V','B','N','M'),
 "ABC":    ('A','B','C','D','E','F','G','H','I','J','K','L','M','N','O','P','Q','R','S','T','U','V','W','X','Y','Z'),
@@ -18,7 +10,53 @@ Keyboards={
 "NONE":   None
 }
 
-Quittables= ('QUIT','EXIT','CANCEL')
+def Quinput(Request=""):
+		Response=input(Request).upper().strip()
+		if Response in Quittables:
+				if GameMode not in ('Y','A','P'):
+						exit(OWL+LtEE+"Game quit. The word was "+RandomWord+"."+LtRst)
+				else:
+						exit(OWL+LtEE+"Game quit."+LtRst)
+		return Response
+
+class ShareObj():
+		def __init__(self):
+				self.Sharings=('NO','YES','N','Y','0','1','F','T','FALSE','TRUE')
+				self.YON=2
+				self.ShareText=""
+				self.ShareYN=''
+				self.WGT="Infinite Wordle"
+		def Add(self,Char):
+				if self.YON:self.ShareText+=Char
+		def Determine(self):
+				if self.YON==2:
+						if self.ShareYN not in self.Sharings:
+								self.ShareYN=Quinput("Do you want to share? (Y)ES/(N)O\n")
+								while self.ShareYN not in self.Sharings:
+										print(OWL+' '*5+LtEE+"||Invalid||"+LtRst+OWL)
+										self.ShareYN=Quinput()
+								self.YON=self.Sharings.index(self.ShareYN)%2
+								print(OWL+self.Sharings[self.YON]+'   ')
+						self.YON=self.Sharings.index(self.ShareYN)%2
+		def Print(self):
+				if self.YON==1:
+						self.__str__()
+				elif self.YON==2:
+						self.Determine()
+						self.__str__()
+		def __str__(self):
+						return f"You can copy the below text, normally with Ctrl-Shift-C, but it will change depending on your terminal.\nIt may look garbled or strange, but it should copy correctly.\n{self.WGT} {Attempt}/{Attempts}\n{self.ShareText}"
+Share=ShareObj()
+
+Attempts=6
+GameMode=''
+Share.YON=2
+LoopGameloop=False
+Unfair=False
+KBH=False
+Modes=      ('I','Y','A','P','M')
+Sharings=   ('N','Y','NO','YES','0','1','F','T','FALSE','TRUE')
+Quittables= ('QUIT','EXIT','CANCEL','Q','-Q')
 Attempables=('-A','--ATTEMPTS')
 Helpables=  ('-H','--HELP','/?','-?')
 Playables=  ('-HTP','--HOW-TO-PLAY')
@@ -34,22 +72,13 @@ ColourNames=('NORMAL','8COL','256COL','HICON','NYTHICON',
 						 'WORDLE','8COLOR','256COLOR','HICONTRAST','NYTHICONTRAST',
 						 'CLASSIC','8COLOUR','256COLOUR','HIGHCONTRAST','NYTHIGHCONTRAST')
 LtRst= '\x1b[0m'#Resets the colours to default.
-LtRstW='\x1b[0;1;38;2;248;248;248m'#Resets the colours to white/bright.
+LtRstW='\x1b[0;1;38;2;248;248;248m'#Resets the colours to white&bright.
 LtC=   '\x1b[48;2;83;141;78m'#Changes the colour to green.
 LtN=   '\x1b[48;2;181;159;59m'#Changes the colour to yellow/orange.
 LtW=   '\x1b[48;2;58;58;60m'#Changes the colour to dark grey.
 LtU=   '\x1b[48;2;81;83;84m'#Changes the colour to light grey.
 LtEE=  '\x1b[38;2;255;0;0m'#Changes the colour to red.
 OWL= '\r\x1b[1A'#"Over Writes" the current line.
-
-def Quinput(Request=""):
-		Response=input(Request).upper().strip()
-		if Response in Quittables:
-				if GameMode not in ('Y','A','P'):
-						exit(OWL+LtEE+"Game quit. The word was "+RandomWord+"."+LtRst)
-				else:
-						exit(OWL+LtEE+"Game quit."+LtRst)
-		return Response
 
 def JSONstr2Dict(InStr):
 		JSONLines=InStr[1:-1].split(',')
@@ -162,9 +191,10 @@ Word lists source\t\thttps://gist.github.com/cfreshman""")
 
 		if i in Attempables:Attempts=int(argv[argv.index(i)+1])
 		if i in Modables:GameMode=argv[argv.index(i)+1]
-		if i in Shareable:ShareYN=argv[argv.index(i)+1]
+		if i in Shareable:
+				Share.ShareYN=argv[argv.index(i)+1]
+				Share.Determine()
 		if i in Unfairables:Unfair=True
-
 		if i in Historics:KBH=True
 		if i in KBables:
 				try:
@@ -177,7 +207,7 @@ if Unfair:
 		WordleList.extend(open("GUESSABLES.TXT").read().split('\n'))
 else:
 		PossibleAnswers=open("ANSWERS.TXT").read().split('\n')
-		WordleList=list()#Done to make a deep copy, or else both lists get modified.
+		WordleList=list()
 		WordleList.extend(PossibleAnswers)
 		WordleList.extend(open("GUESSABLES.TXT").read().split('\n'))
 
@@ -210,7 +240,7 @@ def DateFromWordleNum(GameNumber):
 		while GameNumber>0:
 				Day+=1
 				if Day>MonthArray[Month]:
-						Day=1#Might have to be 0.
+						Day=1
 						Month+=1
 				if Month>12:
 						Month=1
@@ -238,13 +268,13 @@ else:
 		print(OWL+GameMode+' '*16)
 
 if GameMode=='P':
-		ShareYN=False
+		Share.YON=0
 		print(f"Choose your opponent's word and{LtEE} don't show them.{LtRst}")
 		RandomWord=ValidWord(False)
 		LoopGameloop=True
 elif GameMode=='M':
 		LapCount=0
-		ShareYN=False
+		Share.YON=0
 		LoopGameloop=True
 elif GameMode!='I':
 		from urllib import request
@@ -272,47 +302,41 @@ elif GameMode!='I':
 		except request.URLError:
 				print(f"{LtEE}Connection to the NYT website failed{LtRst}, moving to Infinite Wordle mode.")
 
+def PrtCol(Colour):
+		print(Colour+CurLet,end='')
+
 Attempt=0
-WordGuess=None
-if ShareYN!=False:ShareText=str()
+HitAnswer=1
 if KBDisplay:KBColours=['']*26
 while Attempt<Attempts:
-		if GameMode=='M' and Attempt==0 and WordGuess!=None:
-				print('-----\n')
-		else:
-				WordGuess=ValidWord()
-		Colourrr=[0,0,0,0,0]
-		RemainingL=[]
-
-		for i in range(5):
-				if WordGuess[i]==RandomWord[i]:
-						Colourrr[i]=1
-						if KBDisplay:KBColours[KBDisplay.index(WordGuess[i])]=LtC
-				else:
-						RemainingL.append(RandomWord[i])
-						if KBDisplay:KBColours[KBDisplay.index(WordGuess[i])]=LtW
-
-		for i in range(5):
-				if WordGuess[i] in RemainingL:
-						if Colourrr[i]!=1:
-								Colourrr[i]=2
-								if KBDisplay:KBColours[KBDisplay.index(WordGuess[i])]=LtN#Something funky about the highlighting.
-						RemainingL.remove(WordGuess[i])
-
+		if HitAnswer!=2:WordGuess=ValidWord()
+		HitAnswer=1
 		print(OWL+LtRstW,end='')
-		for ColIn,CurLet in zip(Colourrr,WordGuess):
-				if ColIn==0:
-						print(LtW+CurLet,end='')
-						if ShareYN!=False:ShareText+='⬛'#Black square character
-				elif ColIn==1:
-						print(LtC+CurLet,end='')
-						if ShareYN!=False:ShareText+='🟩'#Green square emoji
+		for i in range(5):
+				CurLet=WordGuess[i]
+				if CurLet==RandomWord[i]:
+						PrtCol(LtC)
+						Share.Add('🟩')
+						if KBDisplay:KBColours[KBDisplay.index(CurLet)]=LtC
+				elif CurLet in RandomWord:
+						if RandomWord.count(CurLet)-WordGuess[:i].count(CurLet)>0:
+								PrtCol(LtN)
+								Share.Add('🟨')
+								HitAnswer=0
+								if KBDisplay:KBColours[KBDisplay.index(CurLet)]=LtN
+						else:
+								PrtCol(LtW)
+								Share.Add('⬛')
+								HitAnswer=0
+								if KBDisplay:KBColours[KBDisplay.index(CurLet)]=LtW
 				else:
-						print(LtN+CurLet,end='')
-						if ShareYN!=False:ShareText+='🟨'#Yellowish sqare emoji.
-		if ShareYN!=False:ShareText+='\n'
-		# print(KBColours)
+						PrtCol(LtW)
+						Share.Add('⬛')
+						HitAnswer=0
+						if KBDisplay:KBColours[KBDisplay.index(CurLet)]=LtW
+		Share.Add('\n')
 		print(LtRst+' '*21,end='')
+
 		if KBDisplay:
 				print(LtU,end='')
 				for i in range(len(KBDisplay)):
@@ -322,40 +346,30 @@ while Attempt<Attempts:
 						print(LtRst)
 		else:print()
 		Attempt+=1
-		if Colourrr==[1,1,1,1,1]:
+		if HitAnswer==1:
 				if not LoopGameloop:
 						print(f"You win! That took {Attempt} attempt(s).")
-						OWLSHARE=False
-						if ShareYN not in Sharings:
-								OWLSHARE=True
-								ShareYN=Quinput("Do you want to share? (Y)es/(N)o\n")
-						while ShareYN not in Sharings:
-								ShareYN=print(OWL+' '*5+LtEE+"||Invalid||"+LtRst+OWL)
-								ShareYN=Quinput()
-						if OWLSHARE:print(OWL+ShareYN+' '*20)
-						if Sharings.index(ShareYN)%2==1:
-								if GameMode!='I':
-										WordleGameText="Wordle "+NYT['days_since_launch']
-								else:
-										WordleGameText="Infinite Wordle"
-								print(f"You can copy the below text, normally with Ctrl-Shift-C, but it will change depending on your terminal.\nIt may look garbled or strange, but it should copy correctly.\n{WordleGameText} {Attempt}/{Attempts}\n{ShareText}")#I would copy it automatically, but it depends so much by system that it's not worth it and it would be its own program.
+						if GameMode!='I':
+										Share.WGT="Wordle "+NYT['days_since_launch']
+						Share.Determine()
+						if Share.YON==1:print(Share)
 						break
 				else:
+						Attempt=0
 						if GameMode=='P':
-								Attempt=0
 								print(LtRstW+"Change!"+LtRst)
 								RandomWord=ValidWord(False)
 								if KBDisplay:KBColours=['']*26
 						elif GameMode=='M':
-								Attempt=0
+								print('-----\n')
+								HitAnswer=2
 								LapCount+=1
-								if Unfair:
-										RandomWord=WordleList[RandFromTime(len(WordleList))]
-								else:
-										RandomWord=PossibleAnswers[RandFromTime(len(PossibleAnswers))]
+								if Unfair:RandomWord=WordleList[RandFromTime(len(WordleList))]
+								else:RandomWord=PossibleAnswers[RandFromTime(len(PossibleAnswers))]
 								if KBDisplay:KBColours=['']*26
-		if Attempt==Attempts and Colourrr!=[1,1,1,1,1]:
-				print("Sorry, you ran out of attemps. ",end='') #Add system to see answer.
-				if GameMode=='P':print("The other player wins.")
-				elif GameMode=='M':print(f"You made it {LapCount} round(s). The word was {RandomWord}.")
-				elif GameMode=='I':print("The word was "+RandomWord+".")
+		else:
+				if Attempt==Attempts:
+						print("Sorry, you ran out of attemps. ",end='') #Add system to see answer.
+						if GameMode=='P':print("The other player wins.")
+						elif GameMode=='M':print(f"You made it {LapCount} round(s). The word was {RandomWord}.")
+						elif GameMode=='I':print("The word was "+RandomWord+".")
