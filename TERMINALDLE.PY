@@ -319,14 +319,10 @@ while Attempt<Attempts:
 		CurLet=WordGuess[i]
 		if CurLet==RandomWord[i]:
 			GameLogic(LtC,'🟩')
-		elif CurLet in RandomWord:
-			if CurLet in Letters:
-				GameLogic(LtN,'🟨')
-				Letters.remove(CurLet)
-				HitAnswer=0
-			else:
-				GameLogic(LtW,'⬛')
-				HitAnswer=0
+		elif CurLet in RandomWord and CurLet in Letters:
+			GameLogic(LtN,'🟨')
+			Letters.remove(CurLet)
+			HitAnswer=0
 		else:
 			GameLogic(LtW,'⬛')
 			HitAnswer=0
