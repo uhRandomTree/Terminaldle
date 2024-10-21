@@ -1,5 +1,5 @@
 import datetime
-from sys import argv
+from sys import argv,exit
 
 Keyboards={
 "QWERTY":('Q','W','E','R','T','Y','U','I','O','P','A','S','D','F','G','H','J','K','L','Z','X','C','V','B','N','M'),
@@ -11,12 +11,18 @@ Keyboards={
 }
 
 def Quinput(Request=""):
-	Response=input(Request).upper().strip()
-	if Response in Quittables:
+	Exiting=False
+	try:
+		Response=input(Request).upper().strip()
+		if Response in Quittables:Exiting=True
+	except KeyboardInterrupt:
+		Exiting=True
+		print()		
+	if Exiting:
+		QuitText=OWL+LtEE+"Game quit."+LtRst
 		if GameMode in ('I','M'):
-			exit(OWL+LtEE+"Game quit. The word was "+RandomWord+"."+LtRst)
-		else:
-			exit(OWL+LtEE+"Game quit."+LtRst)
+			QuitText+="The word was "+RandomWord+"."
+		exit(QuitText)
 	return Response
 
 class ShareObj():
@@ -174,20 +180,23 @@ Examples:
 
 In Infinite mode, you play a random word. In NYT mode, you play today's Wordle. In Archive, you play any Wordle from the past.
 In Pass&Play, you choose words for your opponent to guess, until one of you fails.
-In Marathon mode, you play as many games as you can without failing, and the last answer becomes your first guess for the next word.""")
+In Marathon mode, you play as many games as you can without failing, and the last answer becomes your first guess for the next word.
+If unfair mode is enabled, any guessable word can become the answer.""")
 
 	if i in Linkables:
 			print("Attempting to connect to the New York Times website. This may take a minute.")
 			from urllib import request
 			try:
 				NYT=JSONstr2Dict(str(request.urlopen(f"https://www.nytimes.com/svc/wordle/v2/{datetime.date.today():%Y-%m-%d}.json").read(),'utf-8'))
+				SolutionWeird=datetime.date.today().strftime('%Y/%m/')+str(int(datetime.date.today().strftime('%d'))-1).zfill(2)
 			except request.URLError:
 				exit(f"{LtEE}Connection to the NYT website failed{LtRst}, you may attempt to connect manually.")
 			exit(f"""The following are help and source links {LtEE}(SPOILERS FOR TODAY'S AND PAST WORDLES){LtRst}:
 NYT Wordle Game\t\t\thttps://www.nytimes.com/games/wordle/index.html
 Wordle \"API\" for today\t\thttps://www.nytimes.com/svc/wordle/v2/{NYT["print_date"]}.json
-NYT Wordle solution page\thttps://www.nytimes.com/{NYT["print_date"].replace('-','/')}/crosswords/wordle-review-{NYT["days_since_launch"]}.html
-Word lists source\t\thttps://gist.github.com/cfreshman""")
+NYT Wordle solution page\thttps://www.nytimes.com/{SolutionWeird}/crosswords/wordle-review-{NYT["days_since_launch"]}.html
+Word lists source\t\thttps://gist.github.com/cfreshman
+This project's GitHub\t\thttps://github.com/uhRandomTree/Terminaldle""")
 
 	if i in Attempables:Attempts=int(argv[argv.index(i)+1])
 	if i in Modables:GameMode=argv[argv.index(i)+1]
@@ -199,9 +208,7 @@ Word lists source\t\thttps://gist.github.com/cfreshman""")
 	if i in KBables:
 		try:KBDisplay=Keyboards[argv[argv.index(i)+1]]
 		except:print(LtEE+"Invalid keyboard option, using ABC."+LtRst)
-
-# print(f"{LtRstW}\x1b[92mT\x1b[38;5;172mE\x1b[1;97mR\x1b[47;38;5;0mM{LtRstW}I_\x1b[92mN\x1b[38;5;172mA{LtRstW}{LtW}L{LtC}D{LtN}L{LtW}E{LtRst}")
-
+		
 if Unfair:
 	WordleList=open("ANSWERS.TXT").read().split('\n')
 	WordleList.extend(open("GUESSABLES.TXT").read().split('\n'))
