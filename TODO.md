@@ -1,5 +1,5 @@
 - ~~Add a keyboard visualization to show what letters haven't been used and such.~~
-- Add the hard mode present on real Wordle.
+- ~~Add the hard mode present on real Wordle.~~
 - ~~Consolidate the `UpdateIDs.py` into `WORDLE.PY`, or make a way to share functions and data between them. (A lot of `UpdateIDs.py` is copied from `WORDLE.PY` and just takes up space.)~~
 - ~~Link the https://www.nytimes.com/YYYY/MM/DD/crosswords/wordle-review-GAME#.html somewhere for easy access.~~
 - ~~Maybe create a `--links` argument that displays all of the links relevant (like [this](https://www.nytimes.com/2022/02/10/crosswords/best-wordle-tips.html) and the [original](https://www.nytimes.com/games/wordle/index.html), and maybe the subscribe page out of kindness.~~
@@ -11,4 +11,4 @@
 - Add starting splash screen.
 - TUI
 - Add a seperate script for helping solve it (a solution bot, if you will, that has different options of helpfulness).
-- Optomize/compress word data.
+- Optimize/compress word data.
