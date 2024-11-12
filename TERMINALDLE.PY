@@ -57,9 +57,7 @@ Share=ShareObj()
 Attempts=6
 GameMode=''
 Share.YON=2
-LoopGameloop=False
-Unfair=False
-KBH=False
+LoopGameloop,Unfair,KBH,HardMode=[False]*4
 Modes=('I','Y','A','P','M')
 Sharings=('N','Y','NO','YES','0','1','F','T','FALSE','TRUE')
 Quittables=('QUIT','EXIT','CANCEL','Q','-Q')
@@ -70,6 +68,7 @@ Linkables=('-L','--LINKS')
 KBables=('-K','-KB','--KEYBOARD')
 Historics=('-KBH','--KEYBOARD-HISTORY')
 Modables=('-M','--MODE')
+HardModes=('-HM','-H-M','--H-M','--HARDMODE','--HARD-MODE')
 Shareable=('-S','--SHARE')
 Colourables=('-C','-COL','--COLOURS','--COLOUR','--COLORS','--COLOR')
 Unfairables=('-U','--UNFAIR')
@@ -104,6 +103,7 @@ for i in argv:
 -L\t--LINKS\t\tExit the program and display links to the Wordle sub-websites, including help and solution sites.
 -A\t--ATTEMPTS\tChange the number of maximum attempts to make it easier or harder. Default is 6.
 -M\t--MODE\t\tSelect your mode.
+-HM\t--HARD-MODE\tEnables hard mode. Correct letters must be in the same place every subsequent guess, and letters that are in the word must be included.
 OPTIONS:
 \t(I)nfinite
 \tNew (Y)ork Times today
@@ -112,7 +112,7 @@ OPTIONS:
 \t(M)arathon
 
 -KBH\t--KEYBOARD-HISTORY\tDoesn't clear the contents of previous word's keyboards.
--K\t--KEYBOARD\tSelect a keyboard to display during the game. Default is ABC.
+-K\t--KEYBOARD\t\tSelect a keyboard to display during the game. Default is ABC.
 OPTIONS: (In order of)
 \tABC\tThe alphabet.
 \tQWERTY\tA QWERTY keyboard
@@ -205,6 +205,7 @@ This project's GitHub\t\thttps://github.com/uhRandomTree/Terminaldle""")
 		Share.Determine()
 	if i in Unfairables:Unfair=True
 	if i in Historics:KBH=True
+	if i in HardModes:HardMode=True
 	if i in KBables:
 		try:KBDisplay=Keyboards[argv[argv.index(i)+1]]
 		except:print(LtEE+"Invalid keyboard option, using ABC."+LtRst)
@@ -232,7 +233,7 @@ def ValidWord(ShowWord=True):
 			if ShowWord:
 				print(OWL+Word+' '*22)
 			else:
-				print(OWL+"#####"+' '*22)
+				print(OWL+"?????"+' '*22)
 			return Word
 		Word=Quinput()
 
@@ -315,24 +316,49 @@ def GameLogic(Colour,Emoji):
 Attempt=0
 HitAnswer=1
 if KBDisplay:KBColours=['']*26
+if HardMode:
+	HardGreens=['']*5
+	HardYellows=dict()
 while Attempt<Attempts:
 	if HitAnswer!=2:WordGuess=ValidWord()
 	HitAnswer=1
 	print(OWL+LtRstW,end='')
+	
 	Letters=[*RandomWord]
 	for Let1,Let2 in zip(WordGuess,RandomWord):
 		if Let1==Let2:Letters.remove(Let1)
-	for i in range(5):
-		CurLet=WordGuess[i]
-		if CurLet==RandomWord[i]:
-			GameLogic(LtC,'🟩')
-		elif CurLet in RandomWord and CurLet in Letters:
-			GameLogic(LtN,'🟨')
-			Letters.remove(CurLet)
-			HitAnswer=0
-		else:
-			GameLogic(LtW,'⬛')
-			HitAnswer=0
+
+	HardModePassed=True
+	if HardMode:
+		for Set,Checking in zip(HardGreens,WordGuess):
+			if Set:
+				if Checking!=Set:
+					HardModePassed=False
+					break
+		for ShouldBe in HardYellows.keys():
+			if HardYellows[ShouldBe] > WordGuess.count(ShouldBe):
+				HardModePassed=False
+				break
+
+	if HardModePassed:
+		for i in range(5):
+			CurLet=WordGuess[i]
+			if CurLet==RandomWord[i]:
+				GameLogic(LtC,'🟩')
+				if HardMode:HardGreens[i]=CurLet
+			elif CurLet in RandomWord and CurLet in Letters:
+				GameLogic(LtN,'🟨')
+				if HardMode:
+					if CurLet not in HardYellows.keys():HardYellows[CurLet]=1
+					else:HardYellows[CurLet]+=1
+				Letters.remove(CurLet)
+				HitAnswer=0
+			else:
+				GameLogic(LtW,'⬛')
+				HitAnswer=0
+	else:
+		print(' '*5+LtEE+"||Hard mode on||"+' '*5+LtRst+OWL)
+		continue
 	Share.Add('\n')
 	print(LtRst+' '*21,end='')
 
@@ -353,21 +379,23 @@ while Attempt<Attempts:
 			if Share.YON==1:print(Share)
 			break
 		else:
+			if HardMode:
+				HardGreens=['']*5
+				HardYellows=dict()
+			if KBDisplay:KBColours=['']*26
 			Attempt=0
 			if GameMode=='P':
 				print(LtRstW+"Change!"+LtRst)
 				RandomWord=ValidWord(False)
-				if KBDisplay:KBColours=['']*26
 			elif GameMode=='M':
 				print('-----\n')
 				HitAnswer=2
 				LapCount+=1
 				if Unfair:RandomWord=WordleList[RandFromTime(len(WordleList))]
 				else:RandomWord=PossibleAnswers[RandFromTime(len(PossibleAnswers))]
-				if KBDisplay:KBColours=['']*26
 	else:
 		if Attempt==Attempts:
-			print("Sorry, you ran out of attemps. ",end='') #Add system to see answer.
+			print("Sorry, you ran out of attemps. ",end='')
 			if GameMode=='P':print("The other player wins.")
 			elif GameMode=='M':print(f"You made it {LapCount} round(s). The word was {RandomWord}.")
 			elif GameMode=='I':print("The word was "+RandomWord+".")
