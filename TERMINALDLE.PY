@@ -2,11 +2,11 @@ import datetime
 from sys import argv,exit
 
 Keyboards={
-"QWERTY":('Q','W','E','R','T','Y','U','I','O','P','A','S','D','F','G','H','J','K','L','Z','X','C','V','B','N','M'),
-"ABC":('A','B','C','D','E','F','G','H','I','J','K','L','M','N','O','P','Q','R','S','T','U','V','W','X','Y','Z'),
-"AZERTY":('A','Z','E','R','T','Y','U','I','O','P','Q','S','D','F','G','H','J','K','L','M','W','X','C','V','B','N'),
-"WORKMAN":('Q','D','R','W','B','J','F','U','P','A','S','H','T','G','Y','N','E','O','I','Z','X','M','C','V','K','L'),
-"FREQ":('E','T','A','O','I','N','S','H','R','D','L','C','U','M','W','F','G','Y','P','B','V','K','J','X','Q','Z'),
+"QWERTY":"QWERTYUIOPASDFGHJKLZXCVBNM",
+"ABC":"ABCDEFGHIJKLMNOPQRSTUVWXYZ",
+"AZERTY":"AZERTYUIOPQSDFGHJKLMWXCVBN",
+"WORKMAN":"QDRWBJFUPASHTGYNEOIZXMCVKL",
+"FREQ":"ETAOINSHRDLCUMWFGYPBVKJXQZ",
 "NONE":None
 }
 
