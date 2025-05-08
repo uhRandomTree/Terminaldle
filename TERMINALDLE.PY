@@ -22,6 +22,8 @@ def Quinput(Request=""):
 		QuitText=OWL+LtEE+"Game quit."+LtRst
 		if GameMode in ('I','M'):
 			QuitText+="The word was "+RandomWord+"."
+		else:
+			QuitText+="                "
 		exit(QuitText)
 	return Response
 
